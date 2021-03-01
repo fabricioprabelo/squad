@@ -1,0 +1,164 @@
+[
+    {
+        "name": "Acre",
+        "federativeUnit": "AC",
+        "code": 12,
+        "countryId": 30
+    },
+    {
+        "name": "Alagoas",
+        "federativeUnit": "AL",
+        "code": 27,
+        "countryId": 30
+    },
+    {
+        "name": "Amazonas",
+        "federativeUnit": "AM",
+        "code": 13,
+        "countryId": 30
+    },
+    {
+        "name": "Amapá",
+        "federativeUnit": "AP",
+        "code": 16,
+        "countryId": 30
+    },
+    {
+        "name": "Bahia",
+        "federativeUnit": "BA",
+        "code": 29,
+        "countryId": 30
+    },
+    {
+        "name": "Ceará",
+        "federativeUnit": "CE",
+        "code": 23,
+        "countryId": 30
+    },
+    {
+        "name": "Distrito Federal",
+        "federativeUnit": "DF",
+        "code": 53,
+        "countryId": 30
+    },
+    {
+        "name": "Espírito Santo",
+        "federativeUnit": "ES",
+        "code": 32,
+        "countryId": 30
+    },
+    {
+        "name": "Goiás",
+        "federativeUnit": "GO",
+        "code": 52,
+        "countryId": 30
+    },
+    {
+        "name": "Maranhão",
+        "federativeUnit": "MA",
+        "code": 21,
+        "countryId": 30
+    },
+    {
+        "name": "Minas Gerais",
+        "federativeUnit": "MG",
+        "code": 31,
+        "countryId": 30
+    },
+    {
+        "name": "Mato Grosso do Sul",
+        "federativeUnit": "MS",
+        "code": 50,
+        "countryId": 30
+    },
+    {
+        "name": "Mato Grosso",
+        "federativeUnit": "MT",
+        "code": 51,
+        "countryId": 30
+    },
+    {
+        "name": "Pará",
+        "federativeUnit": "PA",
+        "code": 15,
+        "countryId": 30
+    },
+    {
+        "name": "Paraíba",
+        "federativeUnit": "PB",
+        "code": 25,
+        "countryId": 30
+    },
+    {
+        "name": "Pernambuco",
+        "federativeUnit": "PE",
+        "code": 26,
+        "countryId": 30
+    },
+    {
+        "name": "Piauí",
+        "federativeUnit": "PI",
+        "code": 22,
+        "countryId": 30
+    },
+    {
+        "name": "Paraná",
+        "federativeUnit": "PR",
+        "code": 41,
+        "countryId": 30
+    },
+    {
+        "name": "Rio de Janeiro",
+        "federativeUnit": "RJ",
+        "code": 33,
+        "countryId": 30
+    },
+    {
+        "name": "Rio Grande do Norte",
+        "federativeUnit": "RN",
+        "code": 24,
+        "countryId": 30
+    },
+    {
+        "name": "Rondônia",
+        "federativeUnit": "RO",
+        "code": 11,
+        "countryId": 30
+    },
+    {
+        "name": "Roraima",
+        "federativeUnit": "RR",
+        "code": 14,
+        "countryId": 30
+    },
+    {
+        "name": "Rio Grande do Sul",
+        "federativeUnit": "RS",
+        "code": 43,
+        "countryId": 30
+    },
+    {
+        "name": "Santa Catarina",
+        "federativeUnit": "SC",
+        "code": 42,
+        "countryId": 30
+    },
+    {
+        "name": "Sergipe",
+        "federativeUnit": "SE",
+        "code": 28,
+        "countryId": 30
+    },
+    {
+        "name": "São Paulo",
+        "federativeUnit": "SP",
+        "code": 35,
+        "countryId": 30
+    },
+    {
+        "name": "Tocantins",
+        "federativeUnit": "TO",
+        "code": 17,
+        "countryId": 30
+    }
+]
