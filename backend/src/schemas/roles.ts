@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { mongoSortDir, policies, SORT_DESCRIPTION } from "../configs/constants";
+import { policies, SORT_DESCRIPTION } from "../configs/constants";
 import Context from "../configs/context";
 import Role, { PaginatedRoles, RoleInput } from "../types/role";
 import logger from "../utils/logger";

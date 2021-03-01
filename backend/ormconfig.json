@@ -2,8 +2,8 @@
     "type": "mongodb",
     "host": "localhost",
     "port": 27017,
-    "username": "remopp",
-    "database": "remopp",
+    "username": "test1",
+    "database": "test1",
     "password": "jxIgWczIREWQmgkzWAmsy26JJKuNLVnw",
     "useUnifiedTopology": true,
     "entities": ["src/types/*.ts"]

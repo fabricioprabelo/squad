@@ -4,7 +4,9 @@ import moment from "moment-timezone";
 
 // Init dotenv
 dotenv.config({
-  path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`).trim(),
+  path: path
+    .resolve(process.cwd(), `.env.${process.env.NODE_ENV || "development"}`)
+    .trim(),
 });
 
 export const APP_NAME = process.env.APP_NAME || "App Name";
@@ -16,57 +18,21 @@ export const SERVER_SSL_PORT = Number(process.env.SERVER_SSL_PORT) || 4001;
 export const SERVER_SSL_KEY = process.env.SERVER_SSL_KEY || "localhost.key";
 export const SERVER_SSL_CERT = process.env.SERVER_SSL_CERT || "localhost.crt";
 export const SERVER_HOST = process.env.SERVER_HOST || "localhost";
-export const SERVER_SECRET = process.env.SERVER_SECRET || "abc123";
+export const SITE_NAME = process.env.SITE_NAME || "";
+export const COMPANY_ADDRESS = process.env.COMPANY_ADDRESS || "";
 
 export const SINTEGRA_API_SERVER =
   process.env.SINTEGRA_API_SERVER || "localhost";
-
-export const CACHE_REDIS_HOST = process.env.CACHE_REDIS_HOST || "localhost";
-export const CACHE_REDIS_PORT = Number(process.env.CACHE_REDIS_PORT) || 6379;
-export const CACHE_REDIS_PASS = process.env.CACHE_REDIS_PASS || "";
 
 export const SORT_DESCRIPTION =
   "Valores aceitos: 1 (para classificar em ordem crescente) ou -1 (para classificar em ordem decrescente)";
 
 export const MAX_UPLOAD_SIZE = Number(process.env.MAX_UPLOAD_SIZE) || 5;
 export const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE * 1024 * 1024;
-export const mongoSortDir = (
-  dir: "ASC" | "DESC" | "asc" | "desc" | 1 | -1 = "ASC"
-): 1 | -1 => {
-  let result: 1 | -1 = 1;
-  switch (dir) {
-    case "ASC":
-      result = 1;
-      break;
-    case "DESC":
-      result = -1;
-      break;
-    case "asc":
-      result = 1;
-      break;
-    case "desc":
-      result = -1;
-      break;
-    case 1:
-      result = 1;
-      break;
-    case -1:
-      result = -1;
-      break;
-    default:
-      result = 1;
-      break;
-  }
-  return result;
-};
 
-const mTypes =
+const _mimeTypes =
   process.env.UPLOAD_MIME_TYPES || "image/jpeg, image/jpg, image/png";
-const expMimeTypes = mTypes.split(",");
-let mimeTypes: string[] = [];
-for (let mime of expMimeTypes) {
-  mimeTypes.push(mime.trim());
-}
+let mimeTypes: string[] = _mimeTypes.split(",").map((mime) => mime.trim());
 export const UPLOAD_MIME_TYPES = mimeTypes;
 
 export const DATE_FORMAT = process.env.DATE_FORMAT || "YYYY-MM-DD";
@@ -103,9 +69,6 @@ export const LOG_LEVEL:
   log === "fatal"
     ? log
     : "info";
-export const LOG_SEQ_URL = process.env.LOG_SEQ_URL || "http://localhost:5341";
-export const LOG_MAX_FILES = Number(process.env.LOG_MAX_FILES) || 7;
-
 export const TOKEN_EXPIRES = Number(process.env.TOKEN_EXPIRES) || 7;
 export const TOKEN_SECRET = process.env.TOKEN_SECRET || "abc123";
 
@@ -205,12 +168,6 @@ export const errorCode = Object.freeze({
 });
 
 export const policies = Object.freeze({
-  clients: "Clients:Clients",
-  client: "Clients:Client",
-  createClient: "Clients:Create",
-  updateClient: "Clients:Update",
-  deleteClient: "Clients:Delete",
-
   products: "Products:Products",
   product: "Products:Product",
   createProduct: "Products:Create",
@@ -222,30 +179,6 @@ export const policies = Object.freeze({
   createStateAreaCode: "StateAreaCodes:Create",
   updateStateAreaCode: "StateAreaCodes:Update",
   deleteStateAreaCode: "StateAreaCodes:Delete",
-
-  productGroups: "ProductGroups:ProductGroups",
-  productGroup: "ProductGroups:ProductGroup",
-  createProductGroup: "ProductGroups:Create",
-  updateProductGroup: "ProductGroups:Update",
-  deleteProductGroup: "ProductGroups:Delete",
-
-  productStocks: "ProductStocks:ProductStocks",
-  productStock: "ProductStocks:ProductStock",
-  createProductStock: "ProductStocks:Create",
-  updateProductStock: "ProductStocks:Update",
-  deleteProductStock: "ProductStocks:Delete",
-
-  carriers: "Carriers:Carriers",
-  carrier: "Carriers:Carrier",
-  createCarrier: "Carriers:Create",
-  updateCarrier: "Carriers:Update",
-  deleteCarrier: "Carriers:Delete",
-
-  paymentConditions: "PaymentConditions:PaymentConditions",
-  paymentCondition: "PaymentConditions:PaymentCondition",
-  createPaymentCondition: "PaymentConditions:Create",
-  updatePaymentCondition: "PaymentConditions:Update",
-  deletePaymentCondition: "PaymentConditions:Delete",
 
   country: "Countries:Country",
   countries: "Countries:Countries",
@@ -266,12 +199,6 @@ export const policies = Object.freeze({
   updateCity: "City:Update",
   deleteCity: "City:Delete",
 
-  mailings: "Mailings:Mailings",
-  mailing: "Mailings:Mailing",
-  createMailing: "Mailings:Create",
-  updateMailing: "Mailings:Update",
-  deleteMailing: "Mailings:Delete",
-
   policies: "Policies:Policies",
 
   users: "Users:Users",
@@ -286,12 +213,6 @@ export const policies = Object.freeze({
   createRole: "Roles:Create",
   updateRole: "Roles:Update",
   deleteRole: "Roles:Delete",
-
-  settings: "Settings:Settings",
-  setting: "Settings:Setting",
-  createSetting: "Settings:Create",
-  updateSetting: "Settings:Update",
-  deleteSetting: "Settings:Delete",
 
   requestLog: "RequestLogs:RequestLog",
   requestLogs: "RequestLogs:RequestLogs",

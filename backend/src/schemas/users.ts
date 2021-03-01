@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { mongoSortDir, policies, SORT_DESCRIPTION } from "../configs/constants";
+import { policies, SORT_DESCRIPTION } from "../configs/constants";
 import Context from "../configs/context";
 import Role from "../types/role";
 import User, { PaginatedUsers, UserInput } from "../types/user";
@@ -21,7 +21,7 @@ export default class Users {
       nullable: true,
       description: SORT_DESCRIPTION,
     })
-    sortDir: number = 1,
+    sortDir: number = -1,
     @Arg("filterByName", { nullable: true }) filterByName: string,
     @Arg("filterBySurname", { nullable: true }) filterBySurname: string,
     @Arg("filterByEmail", { nullable: true }) filterByEmail: string,

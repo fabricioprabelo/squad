@@ -3,7 +3,6 @@ import { policies } from "../configs/constants";
 import Context from "../configs/context";
 import logger from "../utils/logger";
 import Policy from "../types/policy";
-
 @Resolver()
 export default class Policies {
   @Query(() => [Policy])

@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { mongoSortDir, policies, SORT_DESCRIPTION } from "../configs/constants";
+import { policies, SORT_DESCRIPTION } from "../configs/constants";
 import Context from "../configs/context";
 import logger from "../utils/logger";
 import { CalculatePages } from "../utils/paginating";
@@ -19,7 +19,7 @@ export default class RequestLogs {
       nullable: true,
       description: SORT_DESCRIPTION,
     })
-    sortDir: number = 1,
+    sortDir: number = -1,
     @Arg("filterByIp", { nullable: true }) filterByIp: string,
     @Arg("filterByUser", { nullable: true }) filterByUser: string,
     @Arg("filterByBody", { nullable: true }) filterByBody: string,

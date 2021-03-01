@@ -1,0 +1,25 @@
+{% extends "default.twig" %} {% block content %}
+<tr>
+  <td
+    align="center"
+    bgcolor="#ffffff"
+    style="
+      padding: 0 20px 40px 20px;
+      color: #777777;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      line-height: 30px;
+      border-bottom: 1px solid #f6f6f6;
+    "
+  >
+    <p>Olá Administrador,</p>
+    <p>
+      Um novo usuário se registrou no sistema, por favor, acesse seu painel administrativo efetuar a ativação do mesmo.
+    </p>
+    <br />
+    <p><strong>Nome:</strong> {{name}} {{surname}}</p>
+    <p><strong>E-mail:</strong> {{email}}</p>
+    <p><strong>CPF/CNPJ:</strong> {{document}}</p>
+  </td>
+</tr>
+{% endblock %}

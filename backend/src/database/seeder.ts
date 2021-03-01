@@ -2,14 +2,6 @@ import User from "../types/user";
 import Role from "../types/role";
 import bcrypt from "bcrypt";
 import { ENVIRONMENT, policies } from "../configs/constants";
-import countries from "./imports/countries.json";
-import states from "./imports/states.json";
-import statesAreaCodes from "./imports/states_area_codes.json";
-import cities from "./imports/cities.json";
-import Country from "../types/country";
-import State from "../types/state";
-import StateAreaCode from "../types/state-area-code";
-import City from "../types/city";
 import connection from "../connection";
 import logger from "../utils/logger";
 import Claim from "../types/claim";
@@ -23,10 +15,6 @@ export default async function seeder() {
 
   try {
     logger(`Sanitizando banco de dados antes de semear.`);
-    await Country.clear();
-    await State.clear();
-    await StateAreaCode.clear();
-    await City.clear();
     await User.clear();
     await Role.clear();
   } catch (err) {
@@ -38,7 +26,7 @@ export default async function seeder() {
 
   try {
     const salt = bcrypt.genSaltSync(10);
-    const password = bcrypt.hashSync("776DY18i*", salt);
+    const password = bcrypt.hashSync("123456", salt);
 
     const users = [
       {
@@ -46,7 +34,7 @@ export default async function seeder() {
         surname: "Pereira Rabelo",
         document: "35223076826",
         birthDate: new Date(1989, 4, 20), // Lembre-se que o mês é menos -1
-        email: "contato@remopp.com",
+        email: "contato@fabricioprabelo.com.br",
         password,
         phone: "(17) 98173-0607",
         mobile: "(17) 99169-6331",
@@ -116,7 +104,7 @@ export default async function seeder() {
         if (!userExists) {
           let newUser = new User();
           newUser = Object.assign(newUser, user);
-          if (user.email === "contato@remopp.com") {
+          if (user.email === "contato@fabricioprabelo.com.br") {
             const role = await Role.findOne({ name: "admin" });
             if (role) newUser.roleIds.push(role.id.toString());
           }
@@ -128,80 +116,12 @@ export default async function seeder() {
           });
           if (_user) {
             _user.roleIds = [];
-            if (user.email === "contato@remopp.com") {
+            if (user.email === "contato@fabricioprabelo.com.br") {
               const role = await Role.findOne({ name: "admin" });
               if (role) _user.roleIds.push(role.id.toString());
             }
             logger(`Atualizando usuário padrão "${_user.email}".`);
             await _user.save();
-          }
-        }
-      }
-    }
-
-    const hasCountries = await Country.count();
-    if (!hasCountries) {
-      if (countries.length) {
-        logger(`Semeando países.`);
-        for (const country of countries) {
-          let _country = new Country();
-          _country = Object.assign(_country, country);
-          await _country.save();
-        }
-      }
-    }
-
-    const hasStates = await State.count();
-    if (!hasStates) {
-      if (states.length) {
-        logger(`Semeando estados.`);
-        const brasil = await Country.findOne({
-          name: "Brasil",
-        });
-        if (brasil) {
-          for (const state of states) {
-            let _state = new State();
-            _state = Object.assign(_state, state);
-            _state.countryId = brasil.id.toString();
-            await _state.save();
-          }
-        }
-      }
-    }
-
-    const hasStateCodes = await StateAreaCode.count();
-    if (!hasStateCodes) {
-      if (statesAreaCodes.length) {
-        logger(`Semeando códigos de área dos estados.`);
-        for (const stateAreaCode of statesAreaCodes) {
-          const state = await State.findOne({
-            federativeUnit: stateAreaCode.state,
-          });
-          if (state) {
-            delete stateAreaCode.state;
-            let _stateAreaCode = new StateAreaCode();
-            _stateAreaCode = Object.assign(_stateAreaCode, stateAreaCode);
-            _stateAreaCode.stateId = state.id.toString();
-            await _stateAreaCode.save();
-          }
-        }
-      }
-    }
-
-    const hasCities = await City.count();
-    if (!hasCities) {
-      if (cities.length) {
-        logger(`Semeando cidades.`);
-        for (const city of cities) {
-          const state = await State.findOne({
-            federativeUnit: city.state,
-          });
-          if (state) {
-            delete city.state;
-            let _city = new City();
-            _city = Object.assign(_city, city);
-            _city.stateId = state.id.toString();
-            await _city.save();
           }
         }
       }

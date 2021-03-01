@@ -13,7 +13,6 @@ import {
   APP_NAME,
   ENVIRONMENT,
   IS_DEVELOPMENT,
-  LOG_SEQ_URL,
   SERVER_HOST,
   SERVER_PORT,
   SERVER_SSL_CERT,
@@ -107,10 +106,6 @@ const main = async () => {
     // use routes file
     app.use(routes);
 
-    // set views and viwe engine
-    app.set("views", join(__dirname, "..", "views"));
-    app.set("view engine", "pug");
-
     // serves static files
     app.use(express.static(join(__dirname, "..", "public")));
 
@@ -135,10 +130,6 @@ const main = async () => {
       logger(
         `| ${APP_NAME} Subscriptions Server started at wss://${SERVER_HOST}:${SERVER_SSL_PORT}${SUBSCRIPTIONS_PATH}              |`
       );
-      if (IS_DEVELOPMENT)
-        logger(
-          `| Using Datalust Seq (https://datalust.co/seq) to register logs at ${LOG_SEQ_URL} |`
-        );
       new SubscriptionServer(
         {
           execute,
@@ -163,10 +154,6 @@ const main = async () => {
       logger(
         `| ${APP_NAME} Subscriptions Server started at ws://${SERVER_HOST}:${SERVER_PORT}${SUBSCRIPTIONS_PATH}               |`
       );
-      if (IS_DEVELOPMENT)
-        logger(
-          `| Using Datalust Seq (https://datalust.co/seq) to register logs at ${LOG_SEQ_URL} |`
-        );
       new SubscriptionServer(
         {
           execute,

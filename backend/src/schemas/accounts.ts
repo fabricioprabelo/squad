@@ -7,6 +7,7 @@ import {
   policies,
   TOKEN_EXPIRES,
   TOKEN_SECRET,
+  USER_ACTIVATION_EMAIL,
 } from "../configs/constants";
 import Context from "../configs/context";
 import Role from "../types/role";
@@ -16,7 +17,6 @@ import path from "path";
 import logger from "../utils/logger";
 import jwt from "jsonwebtoken";
 import encrypt from "js-sha256";
-import queue from "../utils/queue";
 import bcrypt from "bcrypt";
 import Token from "../types/token";
 import { ForgotPassword, Login } from "../types/account";
@@ -25,6 +25,7 @@ import FileInput from "../types/file";
 import { GraphQLUpload } from "apollo-server-express";
 import md5 from "md5";
 import Yup from "../configs/yup";
+import mail from "../utils/mail";
 
 @Resolver()
 export default class Accounts {
@@ -201,9 +202,22 @@ export default class Accounts {
         convert_to_date(expires),
         url
       );
-      const queueData = { ...model, ...forgotPassword };
+      const mailData = { ...model, ...forgotPassword };
 
-      await queue("forgot-password-mail", queueData);
+      await mail(
+        email,
+        `Olá ${model.name}, esqueceu sua senha?`,
+        mailData,
+        "forgot-password"
+      )
+        .then((res) => {
+          logger("E-mail de recuperação de senha enviado com sucesso.");
+        })
+        .catch((err) => {
+          logger(
+            `Ocorreu um erro ao tentar enviar e-mail de recuperação de senha: ${err.message}\n${err.stack}`
+          );
+        });
 
       return forgotPassword;
     } catch (err) {
@@ -326,6 +340,21 @@ export default class Accounts {
       if (!model.id) throw new Error(this.errorWhileSavingRecord);
 
       model.roles = roles;
+
+      await mail(
+        USER_ACTIVATION_EMAIL,
+        `Olá, o usuário ${model.name} está pendente de ativação!`,
+        data,
+        "activate-user"
+      )
+        .then((res) => {
+          logger("E-mail de ativação de usuário enviado com sucesso.");
+        })
+        .catch((err) => {
+          logger(
+            `Ocorreu um erro ao tentar enviar e-mail de ativação de usuário: ${err.message}\n${err.stack}`
+          );
+        });
 
       return model;
     } catch (err) {

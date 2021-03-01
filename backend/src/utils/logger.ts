@@ -1,14 +1,7 @@
 import fs from "fs";
 import { join } from "path";
 import bunyan, { LoggerOptions } from "bunyan";
-import seq from "bunyan-seq";
-import {
-  LOG_SEQ_URL,
-  ENVIRONMENT,
-  LOG_LEVEL,
-  now,
-  APP_NAME,
-} from "../configs/constants";
+import { LOG_LEVEL, now, APP_NAME } from "../configs/constants";
 
 const logger = (
   message: string,
@@ -31,13 +24,7 @@ const logger = (
       },
     ],
   };
-  if (ENVIRONMENT === "development")
-    loggerOptions.streams.push(
-      seq.createStream({
-        serverUrl: LOG_SEQ_URL,
-        level: LOG_LEVEL,
-      })
-    );
+
   bunyan.createLogger(loggerOptions);
 
   switch (severity) {
