@@ -77,14 +77,9 @@ const main = async () => {
       resolvers,
     });
 
-    const SUBSCRIPTIONS_PATH = "/subscriptions";
-
     // apollo server
     const server = new ApolloServer({
       schema,
-      subscriptions: {
-        path: SUBSCRIPTIONS_PATH,
-      },
       context: async function ({ req, res }) {
         return new Context(req, res);
       },
@@ -127,20 +122,6 @@ const main = async () => {
       logger(
         `| ${APP_NAME} GraphQL Server started under ${SERVER_MODE} mode at https://${SERVER_HOST}:${SERVER_SSL_PORT}${server.graphqlPath} |`
       );
-      logger(
-        `| ${APP_NAME} Subscriptions Server started at wss://${SERVER_HOST}:${SERVER_SSL_PORT}${SUBSCRIPTIONS_PATH}              |`
-      );
-      new SubscriptionServer(
-        {
-          execute,
-          subscribe,
-          schema,
-        },
-        {
-          server: httpsServer,
-          path: SUBSCRIPTIONS_PATH,
-        }
-      );
     });
 
     // listen http server
@@ -150,20 +131,6 @@ const main = async () => {
       );
       logger(
         `| ${APP_NAME} GraphQL Server started under ${SERVER_MODE} mode at http://${SERVER_HOST}:${SERVER_PORT}${server.graphqlPath}  |`
-      );
-      logger(
-        `| ${APP_NAME} Subscriptions Server started at ws://${SERVER_HOST}:${SERVER_PORT}${SUBSCRIPTIONS_PATH}               |`
-      );
-      new SubscriptionServer(
-        {
-          execute,
-          subscribe,
-          schema,
-        },
-        {
-          server: httpServer,
-          path: SUBSCRIPTIONS_PATH,
-        }
       );
       logger(
         "=========================================================================================="
