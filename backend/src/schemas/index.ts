@@ -1,14 +1,14 @@
 import { NonEmptyArray } from "type-graphql";
-import Accounts from "./accounts";
-import Roles from "./roles";
-import Users from "./users";
-import RequestLogs from "./request-logs";
-import Policies from "./policies";
+import Accounts from "./Accounts";
+import Roles from "./Roles";
+import Users from "./Users";
+import Permissions from "./Permissions";
+import Products from "./Products";
 
 const resolvers: NonEmptyArray<any> = [
   Accounts,
-  Policies,
-  RequestLogs,
+  Permissions,
+  Products,
   Roles,
   Users,
 ];

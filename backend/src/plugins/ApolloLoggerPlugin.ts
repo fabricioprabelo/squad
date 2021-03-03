@@ -1,34 +1,24 @@
-import logger from "../utils/logger";
+import Logger from "../support/Logger";
 import { GraphQLRequest, GraphQLRequestContext } from "apollo-server-types";
 import { APP_NAME } from "../configs/constants";
 
-const ApolloLogger = {
+const ApolloLoggerPlugin = {
   serverWillStart() {
-    logger(
-      "=========================================================================================="
-    );
-    logger(
-      `============================ Starting ${APP_NAME} GraphQL Server ==============================`
-    );
+    Logger.info(`Starting server`);
   },
   requestDidStart(reqContext: GraphQLRequestContext<GraphQLRequest>) {
-    const regex = /IntrospectionQuery|log/gm;
-    const regex2 = /login/gm;
+    const regex = /IntrospectionQuery/gm;
     const query = reqContext.request.query || "{}";
 
     if (!(regex.exec(query) !== null))
-      logger(`${APP_NAME} - Request did start. Query:\n ${query}`);
-
-    if (regex2.exec(query) !== null)
-      logger(`${APP_NAME} - Request did start. Query:\n ${query}`);
+      Logger.info(`${APP_NAME} - Request did start. Query:\n ${query}`);
 
     return {
       parsingDidStart(reqContext: GraphQLRequestContext<GraphQLRequest>) {
         return (err?: Error) => {
           if (err) {
-            logger(
-              `${APP_NAME} - Parsing did start: ${err.message}\n${err.stack}`,
-              "error"
+            Logger.error(
+              `${APP_NAME} - Parsing did start: ${err.message}\n${err.stack}`
             );
           }
         };
@@ -37,9 +27,8 @@ const ApolloLogger = {
         return (errs?: ReadonlyArray<Error>) => {
           if (errs) {
             errs.forEach((err) =>
-              logger(
-                `${APP_NAME} - Validation did start: ${err.message}\n${err.stack}`,
-                "error"
+              Logger.error(
+                `${APP_NAME} - Validation did start: ${err.message}\n${err.stack}`
               )
             );
           }
@@ -48,9 +37,8 @@ const ApolloLogger = {
       executionDidStart(reqContext: GraphQLRequestContext<GraphQLRequest>) {
         return (err?: Error) => {
           if (err) {
-            logger(
-              `${APP_NAME} - Excecution did start: ${err.message}\n${err.stack}`,
-              "error"
+            Logger.error(
+              `${APP_NAME} - Excecution did start: ${err.message}\n${err.stack}`
             );
           }
         };
@@ -58,9 +46,8 @@ const ApolloLogger = {
       didEncounterErrors(error: any) {
         if (error?.errors?.length)
           error?.errors.forEach((err: any) => {
-            logger(
-              `${APP_NAME} - Did encounter errors: ${err.message}\n${err.stack}`,
-              "error"
+            Logger.error(
+              `${APP_NAME} - Did encounter errors: ${err.message}\n${err.stack}`
             );
           });
       },
@@ -68,4 +55,4 @@ const ApolloLogger = {
   },
 };
 
-export default ApolloLogger;
+export default ApolloLoggerPlugin;

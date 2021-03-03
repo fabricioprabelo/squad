@@ -1,5 +1,11 @@
 import * as Yup from "yup";
-import { capitalize } from "./constants";
+import "./constants";
+
+function capitalize(str: string) {
+  if (typeof str === "string")
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  return str;
+}
 
 Yup.setLocale({
   mixed: {

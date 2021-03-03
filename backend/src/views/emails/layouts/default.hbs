@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>{{ site_name }}</title>
+    <title>{{company_name}}</title>
     <meta name="viewport" content="width=device-width" />
     <style type="text/css">
       @media only screen and (max-width: 550px),
@@ -28,7 +28,6 @@
         }
       }
     </style>
-    {% block head %}{% endblock %}
   </head>
   <body bgcolor="#353a4d" style="margin: 0; padding: 0" yahoo="fix">
     <!--[if (gte mso 9)|(IE)]>
@@ -56,15 +55,15 @@
           "
         >
           <img
-            src="{{ site_url }}/assets/images/favicon.png"
-            alt="{{ site_name }}"
+            src="{{server_url}}/assets/images/logo.png"
+            alt="{{company_name}}"
             width="80"
             height="80"
             style="display: block"
           />
         </td>
       </tr>
-      {% block content %}{% endblock %}
+      {{{content}}}
       <tr>
         <td
           align="center"
@@ -77,7 +76,7 @@
             line-height: 18px;
           "
         >
-          <b>{{ site_name }}.</b> | {{ company_address }}
+          <b>{{company_name}}.</b> | {{ company_address }}
         </td>
       </tr>
       <tr>
@@ -93,11 +92,11 @@
                   font-size: 12px;
                 "
               >
-                {{ "now"|date("Y") }} &copy;
+                {{current_year}} &copy;
                 <a
-                  href="https://crm.starkelectric.com.br"
+                  href="{{company_url}}"
                   style="color: #7c62ad"
-                  >CRM {{ site_name }}</a
+                  >{{company_name}}</a
                 >
               </td>
             </tr>
@@ -110,6 +109,5 @@
         </tr>
     </table>
     <![endif]-->
-    {% block footer %}{% endblock %}
   </body>
 </html>

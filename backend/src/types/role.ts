@@ -1,9 +1,9 @@
 import { Field, InputType, ObjectType } from "type-graphql";
 import { Column, Entity } from "typeorm";
-import { PagingResult } from "../utils/paginating";
-import Claim, { ClaimInput } from "./claim";
-import { BaseType } from "./entity";
-import User from "./user";
+import { PagingResult } from "../support/Paginating";
+import Claim, { ClaimInput } from "./Claim";
+import { BaseType } from "./Entity";
+import User from "./User";
 
 @Entity("roles")
 @ObjectType()
@@ -14,14 +14,11 @@ export default class Role extends BaseType {
 
   @Field(() => String)
   @Column()
-  description: string | null;
+  description: string | null = null;
 
   @Field(() => [Claim], { nullable: true })
   @Column(() => Claim)
   claims: Claim[] = [];
-
-  @Field(() => [User], { nullable: true })
-  users?: User[] | null;
 }
 
 @InputType()
@@ -30,7 +27,7 @@ export class RoleInput {
   name: string;
 
   @Field(() => String)
-  description: string | null;
+  description: string;
 
   @Field(() => [ClaimInput], { nullable: true })
   claims: ClaimInput[];

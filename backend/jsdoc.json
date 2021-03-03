@@ -1,0 +1,42 @@
+{
+    "tags": {
+        "allowUnknownTags": ["category"]
+    },
+    "opts": {
+        "encoding": "utf8",
+        "destination": "docs/",
+        "recurse": true,
+        "verbose": true,
+        "template": "node_modules/better-docs"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "search": true,
+        "better-docs": {
+            "name": "",
+            "logo": "../public/assets/images/favicon-32x32.png",
+            "title": "Documentation",
+            "hideGenerator": false,
+            "navLinks": [
+                {
+                    "label": "Github",
+                    "href": "https://github.com/fabriciorabelo/squad"
+                },
+                {
+                    "label": "LinkedIn",
+                    "href": "https://www.linkedin.com/in/fabricio-pereira-rabelo-74277b14b/"
+                }
+            ]
+        }
+    },
+    "plugins": [
+        "node_modules/better-docs/typescript",
+        "node_modules/better-docs/category"
+    ],
+    "source": {
+        "include": ["./src"],
+        "includePattern": "\\.(jsx|js|ts|tsx)$",
+        "excludePattern": "(node_modules/|public/docs)"
+    }
+}

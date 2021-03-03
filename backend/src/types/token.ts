@@ -1,40 +1,41 @@
 import { ObjectType, Field } from "type-graphql";
-import User from "./user";
+import User from "./User";
 
 @ObjectType()
 export default class Token {
   constructor(
     user: User,
+    isSuperAdmin: boolean,
     isAdmin: boolean,
     claims: string[],
     roles: string[],
     createDate: number,
     expiresDate: number
   ) {
-    this.user = user;
-    this.isSuperAdmin = user?.isSuperAdmin || false;
-    this.isAdmin = isAdmin || false;
-    this.claims = claims;
-    this.roles = roles;
+    this.usr = user;
+    this.spa = isSuperAdmin || false;
+    this.adm = isAdmin || false;
+    this.clm = claims;
+    this.rol = roles;
     this.uid = user?.id?.toString();
     this.iat = createDate;
     this.exp = expiresDate;
   }
 
   @Field(() => User)
-  user: User | null = null;
+  usr: User | null = null;
 
   @Field(() => Boolean)
-  isSuperAdmin: boolean = false;
+  spa: boolean = false;
 
   @Field(() => Boolean)
-  isAdmin: boolean = false;
+  adm: boolean = false;
 
   @Field(() => [String])
-  claims: string[] = [];
+  clm: string[] = [];
 
   @Field(() => [String])
-  roles: string[] = [];
+  rol: string[] = [];
 
   @Field(() => String)
   uid: string | null = null;

@@ -1,142 +1,145 @@
-import User from "../types/user";
-import Role from "../types/role";
+import User from "../types/User";
+import Role from "../types/Role";
 import bcrypt from "bcrypt";
-import { ENVIRONMENT, policies } from "../configs/constants";
-import connection from "../connection";
-import logger from "../utils/logger";
-import Claim from "../types/claim";
+import { ENVIRONMENT } from "../configs/constants";
+import Connection from "./Connection";
+import Claim from "../types/Claim";
+import claims from "../configs/claims";
+import Logger from "../support/Logger";
 
-export default async function seeder() {
-  // Create default application connection
-  logger(
-    `Iniciando conexão com o banco de dados para semear. Modo: ${ENVIRONMENT}`
-  );
-  await connection();
-
-  try {
-    logger(`Sanitizando banco de dados antes de semear.`);
-    await User.clear();
-    await Role.clear();
-  } catch (err) {
-    logger(
-      `Ocorreu um erro ao tentar sanitizar o banco de dados: ${err.message}\n${err.stack}`,
-      "error"
+class Seeder {
+  async seed() {
+    // Create default application connection
+    Logger.info(
+      `Iniciando conexão com o banco de dados para semear. Modo: ${ENVIRONMENT}`
     );
-  }
+    try {
+      await Connection.defaultAsync();
+    } catch (err) {
+      Logger.error(
+        `Ocorreu um erro ao tentar conexão com o banco de dados. Erro: ${err.message}\n${err.stack}`
+      );
+    }
 
-  try {
-    const salt = bcrypt.genSaltSync(10);
-    const password = bcrypt.hashSync("123456", salt);
+    try {
+      Logger.info(`Sanitizando banco de dados antes de semear.`);
+      await User.clear();
+      await Role.clear();
+    } catch (err) {
+      Logger.error(
+        `Ocorreu um erro ao tentar sanitizar o banco de dados: ${err.message}\n${err.stack}`
+      );
+    }
 
-    const users = [
-      {
-        name: "Fabricio",
-        surname: "Pereira Rabelo",
-        document: "35223076826",
-        birthDate: new Date(1989, 4, 20), // Lembre-se que o mês é menos -1
-        email: "contato@fabricioprabelo.com.br",
-        password,
-        phone: "(17) 98173-0607",
-        mobile: "(17) 99169-6331",
-        isActivated: true,
-        isSuperAdmin: true,
-      },
-    ];
+    try {
+      const salt = bcrypt.genSaltSync(10);
+      const password = bcrypt.hashSync("123456", salt);
 
-    const roles = [
-      {
-        name: "admin",
-        description: "Administrador",
-      },
-      {
-        name: "common",
-        description: "Comum",
-      },
-    ];
+      const users = [
+        {
+          name: "Fabricio",
+          surname: "Pereira Rabelo",
+          email: "contato@fabricioprabelo.com.br",
+          password,
+          isActivated: true,
+          isSuperAdmin: true,
+        },
+      ];
 
-    if (roles.length) {
-      logger(`Semeando regras padrão.`);
-      for (const role of roles) {
-        const roleExists = await Role.count({ name: role.name });
-        if (!roleExists) {
-          let newRole = new Role();
-          newRole = Object.assign(newRole, role);
-          if (role.name === "admin") {
-            for (const [key, value] of Object.entries(policies)) {
-              const exp = value.split(":");
-              const claim_type = exp[0];
-              const claim_value = exp[1];
-              const roleClaim = new Claim();
-              roleClaim.claimType = claim_type;
-              roleClaim.claimValue = claim_value;
-              newRole.claims.push(roleClaim);
-            }
-          }
-          logger(`Criando regra padrão "${newRole.name}".`);
-          await newRole.save();
-        } else {
-          const _role = await Role.findOne({ name: role.name });
-          if (_role) {
+      const roles = [
+        {
+          name: "admin",
+          description: "Administrador",
+        },
+        {
+          name: "common",
+          description: "Comum",
+        },
+      ];
+
+      if (roles.length) {
+        Logger.info(`Semeando regras padrão.`);
+        for (const role of roles) {
+          const roleExists = await Role.count({ name: role.name });
+          if (!roleExists) {
+            let newRole = new Role();
+            newRole = Object.assign(newRole, role);
             if (role.name === "admin") {
-              for (const [key, value] of Object.entries(policies)) {
+              for (const [key, value] of Object.entries(claims)) {
                 const exp = value.split(":");
                 const claim_type = exp[0];
                 const claim_value = exp[1];
-                let roleClaim = new Claim();
+                const roleClaim = new Claim();
                 roleClaim.claimType = claim_type;
                 roleClaim.claimValue = claim_value;
-                _role.claims.push(roleClaim);
+                newRole.claims.push(roleClaim);
               }
-              logger(`Atualizando regra padrão "${_role.name}".`);
-              await _role.save();
+            }
+            Logger.info(`Criando regra padrão "${newRole.name}".`);
+            await newRole.save();
+          } else {
+            const _role = await Role.findOne({ name: role.name });
+            if (_role) {
+              if (role.name === "admin") {
+                for (const [key, value] of Object.entries(claims)) {
+                  const exp = value.split(":");
+                  const claim_type = exp[0];
+                  const claim_value = exp[1];
+                  let roleClaim = new Claim();
+                  roleClaim.claimType = claim_type;
+                  roleClaim.claimValue = claim_value;
+                  _role.claims.push(roleClaim);
+                }
+                Logger.info(`Atualizando regra padrão "${_role.name}".`);
+                await _role.save();
+              }
             }
           }
         }
       }
-    }
 
-    if (users.length) {
-      logger(`Semeando usuários padrão.`);
-      for (const user of users) {
-        const userExists = await User.count({
-          email: user.email,
-        });
-        if (!userExists) {
-          let newUser = new User();
-          newUser = Object.assign(newUser, user);
-          if (user.email === "contato@fabricioprabelo.com.br") {
-            const role = await Role.findOne({ name: "admin" });
-            if (role) newUser.roleIds.push(role.id.toString());
-          }
-          logger(`Criando usuário padrão "${newUser.email}".`);
-          await newUser.save();
-        } else {
-          const _user = await User.findOne({
+      if (users.length) {
+        Logger.info(`Semeando usuários padrão.`);
+        for (const user of users) {
+          const userExists = await User.count({
             email: user.email,
           });
-          if (_user) {
-            _user.roleIds = [];
+          if (!userExists) {
+            let newUser = new User();
+            newUser = Object.assign(newUser, user);
             if (user.email === "contato@fabricioprabelo.com.br") {
               const role = await Role.findOne({ name: "admin" });
-              if (role) _user.roleIds.push(role.id.toString());
+              if (role) newUser.roleIds.push(role.id);
             }
-            logger(`Atualizando usuário padrão "${_user.email}".`);
-            await _user.save();
+            Logger.info(`Criando usuário padrão "${newUser.email}".`);
+            await newUser.save();
+          } else {
+            const _user = await User.findOne({
+              email: user.email,
+            });
+            if (_user) {
+              _user.roleIds = [];
+              if (user.email === "contato@fabricioprabelo.com.br") {
+                const role = await Role.findOne({ name: "admin" });
+                if (role) _user.roleIds.push(role.id);
+              }
+              Logger.info(`Atualizando usuário padrão "${_user.email}".`);
+              await _user.save();
+            }
           }
         }
       }
+      Logger.info("Finalizado semeadura do banco de dados.");
+    } catch (err) {
+      Logger.error(
+        `Ocorreu um erro ao tentar semar o banco de dados: ${err.message}\n${err.stack}`
+      );
     }
 
-    logger("Finalizado semeadura do banco de dados.");
-  } catch (err) {
-    logger(
-      `Ocorreu um erro ao tentar semar o banco de dados: ${err.message}\n${err.stack}`,
-      "error"
-    );
+    // Finaliza o processo
+    process.exit();
   }
-
-  // Finaliza o processo
-  process.exit();
 }
 
-seeder();
+const seeder = new Seeder();
+seeder.seed();

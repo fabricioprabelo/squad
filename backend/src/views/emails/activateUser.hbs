@@ -1,4 +1,4 @@
-{% extends "default.twig" %} {% block content %}
+{{> layout }}
 <tr>
   <td
     align="center"
@@ -19,7 +19,5 @@
     <br />
     <p><strong>Nome:</strong> {{name}} {{surname}}</p>
     <p><strong>E-mail:</strong> {{email}}</p>
-    <p><strong>CPF/CNPJ:</strong> {{document}}</p>
   </td>
 </tr>
-{% endblock %}

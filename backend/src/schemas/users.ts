@@ -1,16 +1,24 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { policies, SORT_DESCRIPTION } from "../configs/constants";
-import Context from "../configs/context";
-import Role from "../types/role";
-import User, { PaginatedUsers, UserInput } from "../types/user";
-import logger from "../utils/logger";
-import { CalculatePages } from "../utils/paginating";
+import { SORT_DESCRIPTION } from "../configs/constants";
+import Context from "../support/Context";
+import Role from "../types/Role";
+import User, { PaginatedUsers, UserInput } from "../types/User";
+import { CalculatePages } from "../support/Paginating";
 import bcrypt from "bcrypt";
 import Yup from "../configs/yup";
+import claims from "../configs/claims";
+import Logger from "../support/Logger";
+import UsersRepository from "../repositories/UsersRepository";
+import { getCustomRepository } from "typeorm";
 
 @Resolver()
 export default class Users {
+  usersRepository: UsersRepository;
   unknowRecordMessage: string = "Usuário não foi encontrado.";
+
+  constructor() {
+    this.usersRepository = getCustomRepository(UsersRepository);
+  }
 
   @Query(() => PaginatedUsers)
   async users(
@@ -28,7 +36,7 @@ export default class Users {
     @Arg("filterByDocument", { nullable: true }) filterByDocument: string,
     @Ctx() ctx?: Context
   ): Promise<PaginatedUsers> {
-    ctx && (await ctx.hasPermission(policies.users));
+    ctx && (await ctx.hasPermission(claims.users));
 
     try {
       let where = {};
@@ -64,37 +72,15 @@ export default class Users {
       const user = ctx && (await ctx.getUser());
       if (!user.isSuperAdmin) where = { ...where, isSuperAdmin: false };
 
-      const total = await User.count({ where });
-      const pagination = new CalculatePages(page, perPage, total);
-
-      let list = await User.find({
-        where,
-        take: pagination.perPage,
-        skip: pagination.offset,
-        order: { [sortBy]: sortDir },
-      });
-
-      if (list.length) {
-        for (let model of list) {
-          model.roles = [];
-          if (model.roleIds.length) {
-            for (const roleId of model.roleIds) {
-              const role = await Role.findOne(roleId);
-              if (role) model.roles.push(role);
-            }
-          }
-        }
-      }
-
-      return new PaginatedUsers(
-        pagination.total,
-        pagination.pages,
-        pagination.perPage,
-        pagination.currentPage,
-        list
+      return await this.usersRepository.getEntitiesPagination(
+        page,
+        perPage,
+        sortBy,
+        sortDir,
+        where
       );
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
       return err;
     }
   }
@@ -104,11 +90,11 @@ export default class Users {
     ctx && (await ctx.isAuthenticated());
 
     try {
-      return await User.find({
+      return await this.usersRepository.getEntities({
         order: { name: 1 },
       });
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
       return err;
     }
   }
@@ -118,25 +104,17 @@ export default class Users {
     @Arg("id", { nullable: false }) id: string,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {
-    ctx && (await ctx.hasPermission(policies.user));
+    ctx && (await ctx.hasPermission(claims.user));
 
     try {
       if (!id) throw new Error(this.unknowRecordMessage);
 
-      let model = await User.findOne(id);
+      const model = await this.usersRepository.getEntityById(id);
       if (!model) throw new Error(this.unknowRecordMessage);
-
-      model.roles = [];
-      if (model.roleIds.length) {
-        for (const roleId of model.roleIds) {
-          const role = await Role.findOne(roleId);
-          if (role) model.roles.push(role);
-        }
-      }
 
       return model;
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
       return err;
     }
   }
@@ -146,7 +124,7 @@ export default class Users {
     @Arg("data") data: UserInput,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {
-    ctx && (await ctx.hasPermission(policies.createUser));
+    ctx && (await ctx.hasPermission(claims.createUser));
 
     try {
       data.email = data.email.toLowerCase().trim();
@@ -162,55 +140,25 @@ export default class Users {
         abortEarly: true,
       });
 
-      const has = await User.count({
+      const has = await this.usersRepository.entityExists({
         email: data.email,
       });
       if (has) throw new Error("Já existe um usuário com este e-mail.");
-
-      let model = new User();
 
       if (ctx && !ctx.isSuperAdmin && data?.isSuperAdmin === true)
         throw new Error(
           "Somente um super-administrador pode criar outro super-administrador."
         );
 
-      if (data.document.trim()) {
-        let document = data.document.trim().replace(/\D/gm, "");
-        data.document = document;
-      }
-
-      if (data.password?.trim()) {
-        const salt = bcrypt.genSaltSync(10);
-        model.password = bcrypt.hashSync(data.password.trim(), salt);
-      } else {
+      if (!data.password?.trim()) {
         throw new Error("Senha é obrigatória.");
       }
-      delete data.password;
 
-      const roles = [];
-      if (data.roles?.length) {
-        model.roleIds = [];
-        for (const roleId of data.roles) {
-          const role = await Role.findOne(roleId);
-          if (role) model.roleIds.push(role.id.toString());
-        }
-        delete data.roles;
-      }
-      if (model.roleIds.length) {
-        for (const roleId of model.roleIds) {
-          const role = await Role.findOne(roleId);
-          if (role) roles.push(role);
-        }
-      }
-
-      await model.save();
-      if (!model.id) throw new Error("Ocorreu um erro ao salvar registro.");
-
-      model.roles = roles;
+      const model = this.usersRepository.createEntity(data);
 
       return model;
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
       return err;
     }
   }
@@ -221,12 +169,12 @@ export default class Users {
     @Arg("data") data: UserInput,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {
-    ctx && (await ctx.hasPermission(policies.updateUser));
+    ctx && (await ctx.hasPermission(claims.updateUser));
 
     try {
       if (!id) throw new Error(this.unknowRecordMessage);
 
-      let model = await User.findOne(id);
+      let model = await this.usersRepository.getEntityById(id);
       if (!model) throw new Error(this.unknowRecordMessage);
 
       const schema = Yup.object().shape({
@@ -244,41 +192,11 @@ export default class Users {
           "Somente um super-administrador pode criar outro super-administrador."
         );
 
-      if (data.document?.trim()) {
-        let document = data.document.trim().replace(/\D/gm, "");
-        data.document = document;
-      }
-
-      if (data.password?.trim()) {
-        const salt = bcrypt.genSaltSync(10);
-        model.password = bcrypt.hashSync(data.password.trim(), salt);
-      }
-      delete data.password;
-
-      const roles = [];
-      if (data.roles?.length) {
-        model.roleIds = [];
-        for (const roleId of data.roles) {
-          const role = await Role.findOne(roleId);
-          if (role) model.roleIds.push(role.id.toString());
-        }
-        delete data.roles;
-      }
-      if (model.roleIds.length) {
-        for (const roleId of model.roleIds) {
-          const role = await Role.findOne(roleId);
-          if (role) roles.push(role);
-        }
-      }
-
-      model = Object.assign(model, data);
-      await model.save();
-
-      model.roles = roles;
+      await this.usersRepository.updateEntity(model, data);
 
       return model;
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
       return err;
     }
   }
@@ -288,30 +206,63 @@ export default class Users {
     @Arg("id", { nullable: false }) id: string,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {
-    ctx && (await ctx.hasPermission(policies.deleteUser));
+    ctx && (await ctx.hasPermission(claims.deleteUser));
 
     try {
       if (!id) throw new Error(this.unknowRecordMessage);
 
-      const model = await User.findOne(id);
+      const model = await this.usersRepository.getEntityById(id);
       if (!model) throw new Error(this.unknowRecordMessage);
 
-      const roles = [];
-      if (model.roleIds.length) {
-        for (const roleId of model.roleIds) {
-          const role = await Role.findOne(roleId);
-          if (role) {
-            roles.push(role);
-          }
-        }
-      }
-      model.roles = roles;
-
-      await model.softRemove();
+      await this.usersRepository.deleteEntity(model);
 
       return model;
     } catch (err) {
-      logger(err, "error");
+      Logger.error(err);
+      return err;
+    }
+  }
+
+  @Mutation(() => User)
+  async softDeleteUser(
+    @Arg("id", { nullable: false }) id: string,
+    @Ctx() ctx?: Context
+  ): Promise<User | undefined> {
+    ctx && (await ctx.hasPermission(claims.deleteUser));
+
+    try {
+      if (!id) throw new Error(this.unknowRecordMessage);
+
+      const model = await this.usersRepository.getEntityById(id);
+      if (!model) throw new Error(this.unknowRecordMessage);
+
+      await this.usersRepository.softDeleteEntity(model);
+
+      return model;
+    } catch (err) {
+      Logger.error(err);
+      return err;
+    }
+  }
+
+  @Mutation(() => User)
+  async restoreUser(
+    @Arg("id", { nullable: false }) id: string,
+    @Ctx() ctx?: Context
+  ): Promise<User | undefined> {
+    ctx && (await ctx.hasPermission(claims.deleteUser));
+
+    try {
+      if (!id) throw new Error(this.unknowRecordMessage);
+
+      const model = await this.usersRepository.getEntityById(id);
+      if (!model) throw new Error(this.unknowRecordMessage);
+
+      await this.usersRepository.restoreEntity(model);
+
+      return model;
+    } catch (err) {
+      Logger.error(err);
       return err;
     }
   }
