@@ -46,6 +46,7 @@
         "yup": "^0.32.8"
     },
     "devDependencies": {
+        "@2fd/graphdoc": "^2.4.0",
         "@types/bcrypt": "^3.0.0",
         "@types/bunyan": "^1.8.6",
         "@types/cors": "^2.8.9",
