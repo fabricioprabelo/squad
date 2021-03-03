@@ -43,6 +43,25 @@ class UsersRepository
   implements
     ISoftDeleteRepository<User, UserInput>,
     IEntityPagination<User, PaginatedUsers> {
+  private tokenUser(model: User): User {
+    let user = new User();
+    user = Object.assign(user, model);
+
+    delete user.password;
+    delete user.resetCode;
+    delete user.resetExpires;
+    delete user.roleIds;
+    delete user.claims;
+    delete user.roles;
+    delete user.isSuperAdmin;
+    delete user.isActivated;
+    delete user.createdAt;
+    delete user.updatedAt;
+    delete user.deletedAt;
+
+    return user;
+  }
+
   async getEntitiesPagination(
     page: number,
     perPage: number,
@@ -67,25 +86,6 @@ class UsersRepository
       pagination.currentPage,
       list
     );
-  }
-
-  private tokenUser(model: User): User {
-    let user = new User();
-    user = Object.assign(user, model);
-
-    delete user.password;
-    delete user.resetCode;
-    delete user.resetExpires;
-    delete user.roleIds;
-    delete user.claims;
-    delete user.roles;
-    delete user.isSuperAdmin;
-    delete user.isActivated;
-    delete user.createdAt;
-    delete user.updatedAt;
-    delete user.deletedAt;
-
-    return user;
   }
 
   async loginAttempt(
