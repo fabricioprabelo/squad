@@ -21,18 +21,27 @@ export class Login {
 
 @ObjectType()
 export class ForgotPassword {
-  constructor(code: string, expires: Date, url: string) {
+  constructor(
+    code: string,
+    expires: Date,
+    url: string,
+    previewUrl: string | null = null
+  ) {
     this.code = code;
     this.expires = expires;
     this.url = url;
+    this.previewUrl = previewUrl;
   }
 
   @Field(() => String)
-  code: string;
+  code: string | null = null;
 
   @Field(() => String)
-  url: string;
+  url: string | null = null;
+
+  @Field(() => String, { nullable: true })
+  previewUrl: string | null = null;
 
   @Field(() => Date)
-  expires: Date;
+  expires: Date | null = null;
 }
