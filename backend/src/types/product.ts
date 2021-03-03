@@ -14,7 +14,7 @@ export default class Product extends BaseType {
   @Column()
   description: string | null = null;
 
-  @Field(() => Float, { defaultValue: 0 })
+  @Field(() => Float)
   @Column()
   price: number = 0;
 }

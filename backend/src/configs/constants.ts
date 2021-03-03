@@ -15,7 +15,7 @@ export const APP_NAME = process.env.APP_NAME?.trim() || "Application";
 export const ENVIRONMENT = env;
 export const IS_PRODUCTION = ENVIRONMENT === "production";
 export const IS_DEVELOPMENT =
-  ENVIRONMENT === "development" || ENVIRONMENT === "test";
+  ENVIRONMENT === "test" || ENVIRONMENT === "development";
 export const SERVER_PORT = Number(process.env.SERVER_PORT?.trim()) || 4000;
 export const SERVER_HOST = process.env.SERVER_HOST?.trim() || "localhost";
 export const SERVER_URL =
