@@ -211,14 +211,19 @@ class UsersRepository
         .replace("{email}", encodeURIComponent(email))
         .trim();
 
-      await SendMailService.execute(
+      const previewUrl = await SendMailService.execute(
         email,
         `Olá ${model.name}, esqueceu sua senha?`,
         { model, url },
         "forgotPassword"
       );
 
-      return new ForgotPassword(model.resetCode, model.resetExpires, url);
+      return new ForgotPassword(
+        model.resetCode,
+        model.resetExpires,
+        url,
+        previewUrl
+      );
     } catch (err) {
       throw err;
     }
