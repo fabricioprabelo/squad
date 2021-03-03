@@ -21,7 +21,6 @@ import {
   FindManyOptions,
   FindOneOptions,
   ObjectID,
-  ObjectLiteral,
   Repository,
 } from "typeorm";
 import fs from "fs";
