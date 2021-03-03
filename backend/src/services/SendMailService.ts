@@ -13,7 +13,7 @@ import {
 } from "../configs/constants";
 import fs from "fs";
 import path from "path";
-import nodemailer, { Transporter } from "nodemailer";
+import Nodemailer, { Transporter } from "nodemailer";
 import Logger from "../support/Logger";
 import handlebars from "handlebars";
 import DateTime from "../support/DateTime";
@@ -28,8 +28,8 @@ class SendMailService {
 
   constructor() {
     if (IS_DEVELOPMENT) {
-      nodemailer.createTestAccount().then((account) => {
-        const transporter = nodemailer.createTransport({
+      Nodemailer.createTestAccount().then((account) => {
+        const transporter = Nodemailer.createTransport({
           host: account.smtp.host,
           port: account.smtp.port,
           secure: account.smtp.secure,
@@ -41,7 +41,7 @@ class SendMailService {
         this.client = transporter;
       });
     } else {
-      this.client = nodemailer.createTransport({
+      this.client = Nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
         secure: SMTP_ENABLE_SSL,
@@ -69,14 +69,22 @@ class SendMailService {
     subject: string,
     variables: object,
     template: string
-  ) {
-    const npsLayoutPath = path.resolve(
+  ): Promise<string | undefined> {
+    const npsHeaderPath = path.resolve(
       __dirname,
       "..",
       "views",
       "emails",
-      "layouts",
-      `default.hbs`
+      "partials",
+      `head.hbs`
+    );
+    const npsFooterPath = path.resolve(
+      __dirname,
+      "..",
+      "views",
+      "emails",
+      "partials",
+      `footer.hbs`
     );
     const npsPath = path.resolve(
       __dirname,
@@ -86,7 +94,8 @@ class SendMailService {
       `${template}.hbs`
     );
 
-    const layoutFileContent = fs.readFileSync(npsLayoutPath).toString("utf8");
+    const headFileContent = fs.readFileSync(npsHeaderPath).toString("utf8");
+    const footerFileContent = fs.readFileSync(npsFooterPath).toString("utf8");
     const templateFileContent = fs.readFileSync(npsPath).toString("utf8");
 
     variables = {
@@ -98,7 +107,8 @@ class SendMailService {
       current_year: DateTime.now().format("YYYY"),
     };
 
-    handlebars.registerPartial("layout", layoutFileContent);
+    handlebars.registerPartial("head", headFileContent);
+    handlebars.registerPartial("footer", footerFileContent);
     const mailTemplateParse = handlebars.compile(templateFileContent);
     const html = mailTemplateParse(variables);
 
@@ -113,9 +123,13 @@ class SendMailService {
       });
 
       Logger.info(`Mensagem enviada: ${message.messageId}`);
-      Logger.info(
-        `URL de visualização: ${nodemailer.getTestMessageUrl(message)}`
-      );
+      if (IS_DEVELOPMENT) {
+        const previewUrl = Nodemailer.getTestMessageUrl(message);
+        Logger.info(`URL de visualização: ${previewUrl}`);
+        return previewUrl.toString();
+      }
+
+      return;
     } catch (err) {
       Logger.error(
         `Ocorreu um erro ao tentar envia e-mail: ${err.message}\n${err.stack}`
