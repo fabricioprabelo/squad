@@ -1,0 +1,21 @@
+.data-table-loading {
+  font-size: 0.7rem;
+  padding: 40px;
+  text-align: center;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dark-only .data-table-loading {
+  background-color: #262932;
+  color: #fff;
+}
+
+.data-table-no-data {
+  font-size: 0.9rem;
+  padding: 24px;
+  text-align: center;
+  display: block;
+  width: 100%;
+}

@@ -1,0 +1,96 @@
+.btn .fa {
+  margin-right: 7px !important;
+}
+
+#header-input-search {
+  width: 90% !important;
+}
+
+div .btn {
+  margin-right: 7px !important;
+}
+
+div .btn:last-child {
+  margin-right: 0px !important;
+}
+
+body.light .data-table-no-data {
+  color: rgba(38, 41, 50, 1);
+  background-color: rgba(255, 255, 255, 1);
+}
+
+body.dark-only .data-table-no-data {
+  color: rgba(255, 255, 255, 1);
+  background-color: rgba(38, 41, 50, 1);
+}
+.jkanban-container
+  .kanban-container
+  .kanban-board
+  .kanban-drag
+  > div
+  > div
+  div[data-testid="lane"] {
+  min-width: 25%;
+}
+
+.react-autosuggest__suggestions-list {
+  border: 1px solid #ced4da;
+  border-top: 0px solid;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+.react-autosuggest__suggestion {
+  padding: 5px;
+  border-bottom: 1px solid #ced4da;
+  cursor: pointer;
+}
+.react-autosuggest__suggestion:first-child {
+  padding-top: 10px;
+}
+.react-autosuggest__suggestion:last-child {
+  border-bottom: 0px solid;
+}
+
+.profile-vector img {
+  border-radius: 50%;
+  border: 8px solid #ced4da;
+}
+
+.datepicker-time .react-datepicker {
+  width: 345px !important;
+}
+
+.react-markdown {
+  border: 1px solid #ced4da;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.react-markdown.disabled {
+  background-color: #e9ecef;
+  opacity: 1 !important;
+}
+
+html.color-1 .notification .card .media .media-body span p {
+  font-size: 14px;
+  font-family: Rubik, sans-serif;
+  letter-spacing: 0.5px;
+  color: rgba(43, 43, 43, 0.7);
+}
+
+.modal-body p {
+  font-size: 14px;
+  font-family: Rubik, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.jkanban-container .react-kanban-column {
+  width: 340px !important;
+}
+
+.jkanban-container .react-kanban-column .kanban-item {
+  width: 300px !important;
+}

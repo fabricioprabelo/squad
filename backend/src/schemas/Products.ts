@@ -11,7 +11,7 @@ import { getCustomRepository } from "typeorm";
 @Resolver()
 export default class Products {
   productsRepository: ProductsRepository;
-  unknowRecordMessage: string = "Usuário não foi encontrado.";
+  unknowRecordMessage: string = "Produto não foi encontrado.";
 
   constructor() {
     this.productsRepository = getCustomRepository(ProductsRepository);
@@ -95,9 +95,11 @@ export default class Products {
       });
 
       const has = await this.productsRepository.entityExists({
-        name: data.name,
+        where: {
+          name: { $regex: new RegExp(data.name.trim()), $options: "i" },
+        },
       });
-      if (has) throw new Error("Já existe um usuário com este e-mail.");
+      if (has) throw new Error("Já existe um produto com este nome.");
 
       const model = await this.productsRepository.createEntity(data);
 

@@ -96,7 +96,7 @@ export default class Roles {
       });
 
       const has = await this.rolesRepository.entityExists({
-        name: data.name?.trim()?.toLowerCase(),
+        where: { name: data.name?.trim()?.toLowerCase() },
       });
       if (has) throw new Error("Já existe uma regra com este nome.");
 

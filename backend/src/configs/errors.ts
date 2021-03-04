@@ -7,6 +7,7 @@ interface ValidationErrors {
 }
 
 const errors: ErrorRequestHandler = (error, request, response, next) => {
+  console.log(error);
   if (error instanceof Yup.ValidationError) {
     let errors: ValidationErrors = {};
 
@@ -21,6 +22,7 @@ const errors: ErrorRequestHandler = (error, request, response, next) => {
       errors,
     });
   } else if (error instanceof Error) {
+    console.log("XXX");
     return response.status(httpCode.UnprocessableEntity).json({
       name: errorCode.UnprocessableEntity,
       message: error?.message || "Ocorreu um erro.",

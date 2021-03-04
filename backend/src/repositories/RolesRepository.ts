@@ -107,7 +107,7 @@ class RolesRepository
     return await Role.findOne(id, options);
   }
 
-  async entityExists(conditions?: FindConditions<Role>): Promise<boolean> {
+  async entityExists(conditions?: FindManyOptions<Role>): Promise<boolean> {
     const count = await Role.count(conditions);
     return !!count;
   }

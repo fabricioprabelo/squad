@@ -84,7 +84,7 @@ class ProductsRepository
     return await Product.findOne(id, options);
   }
 
-  async entityExists(conditions?: FindConditions<Product>): Promise<boolean> {
+  async entityExists(conditions?: FindManyOptions<Product>): Promise<boolean> {
     const count = await Product.count(conditions);
     return !!count;
   }

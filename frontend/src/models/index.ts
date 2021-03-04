@@ -1,9 +1,9 @@
 export interface Model {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SoftDeleteModel extends Model {
-  deletedAt: Date | null;
+  deletedAt: string | null;
 }

@@ -1,15 +1,30 @@
+import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import timezones from "../database/data/timezones.json";
 
 // Init dotenv
 const env = process.env.NODE_ENV?.trim()?.toLowerCase() || "development";
-dotenv.config({
-  path: path.resolve(
-    process.cwd(),
-    `.env.${env === "test" ? "development" : env}`
-  ),
-});
+const envPath = path.join(process.cwd(), ".env");
+const envDevelopmentPath = path.join(process.cwd(), ".env.development");
+const envProductionPath = path.join(process.cwd(), ".env.production");
+
+if (fs.existsSync(envPath)) {
+  dotenv.config({
+    path: envPath,
+  });
+} else if (
+  (env === "test" || env === "development") &&
+  fs.existsSync(envDevelopmentPath)
+) {
+  dotenv.config({
+    path: envDevelopmentPath,
+  });
+} else if (env === "production" && fs.existsSync(envProductionPath)) {
+  dotenv.config({
+    path: envProductionPath,
+  });
+}
 
 export const APP_NAME = process.env.APP_NAME?.trim() || "Application";
 export const ENVIRONMENT = env;
@@ -35,9 +50,9 @@ const _mimeTypes =
 let mimeTypes: string[] = _mimeTypes.split(",").map((mime) => mime.trim());
 export const UPLOAD_MIME_TYPES = mimeTypes;
 
-export const TIMEZONE = timezones.includes(process.env.TIMEZONE?.trim())
-  ? process.env.TIMEZONE?.trim()
-  : "America/Los_Angeles";
+export const TIMEZONE = timezones.includes(process.env.TIMEZONE?.trim() || "")
+  ? process.env.TIMEZONE?.trim() || ""
+  : "America/Sao_Paulo";
 
 export const USER_ACTIVATION_EMAIL =
   process.env.USER_ACTIVATION_EMAIL?.trim() || "";

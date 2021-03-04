@@ -4,7 +4,11 @@ import User, { ProfileInput, RegisterInput } from "../types/User";
 import bcrypt from "bcrypt";
 import { ForgotPassword, Login } from "../types/Account";
 import FileInput from "../types/File";
-import { GraphQLUpload } from "apollo-server-express";
+import {
+  AuthenticationError,
+  GraphQLUpload,
+  ValidationError,
+} from "apollo-server-express";
 import Yup from "../configs/yup";
 import UsersRepository from "../repositories/UsersRepository";
 import Logger from "../support/Logger";
@@ -29,6 +33,9 @@ export default class Accounts {
     @Arg("remember", { nullable: true }) remember: boolean = false
   ): Promise<Login | undefined> {
     try {
+      email = email?.trim()?.toLowerCase();
+      password = password?.trim();
+
       const data = { email, password };
 
       const schema = Yup.object().shape({
@@ -45,7 +52,19 @@ export default class Accounts {
         password,
         remember
       );
-      if (!model) throw new Error(this.unknowRecordMessage);
+      if (!model) throw new Error("Usuário não foi encontrado.");
+
+      if (!model.user.isActivated)
+        throw new Error(
+          "Usuário desativado, entre em contato com um administrador."
+        );
+
+      const passwordEquals = await bcrypt.compareSync(
+        password,
+        model.user.password
+      );
+      if (!passwordEquals)
+        throw new Error("A senha não corresponde ao usuário informado.");
 
       return model;
     } catch (err) {
@@ -145,7 +164,7 @@ export default class Accounts {
       });
 
       const hasUser = await this.usersRepository.entityExists({
-        email: data.email,
+        where: { email: data.email },
       });
       if (hasUser) throw new Error(this.userAlreadyInUse);
 

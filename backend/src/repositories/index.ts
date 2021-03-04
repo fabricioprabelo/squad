@@ -19,7 +19,7 @@ export interface IBaseRepository<Entity, EntityInput> {
     id?: string | number | Date | ObjectID,
     options?: FindOneOptions<Entity>
   ): Promise<Entity>;
-  entityExists(conditions?: FindConditions<Entity>): Promise<boolean>;
+  entityExists(conditions?: FindManyOptions<Entity>): Promise<boolean>;
 }
 
 export interface ISoftDeleteRepository<Entity, EntityInput>

@@ -141,7 +141,7 @@ export default class Users {
       });
 
       const has = await this.usersRepository.entityExists({
-        email: data.email,
+        where: { email: data.email },
       });
       if (has) throw new Error("Já existe um usuário com este e-mail.");
 
