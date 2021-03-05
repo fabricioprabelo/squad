@@ -54,8 +54,8 @@ export default function Users() {
     if (!loaded)
       await client.query<IUsersQuery>({
         query: gql`
-        query users($sortDir: Int, $sortBy: String, $perPage: Int, $page: Int, $filterByName: String) {
-          users(sortDir: $sortDir, sortBy: $sortBy, perPage: $perPage, page: $page, filterByName: $filterByName) {
+        query users($sortDir: Int, $sortBy: String, $perPage: Int, $page: Int, $filterByName: String, $filterByEmail: String) {
+          users(sortDir: $sortDir, sortBy: $sortBy, perPage: $perPage, page: $page, filterByName: $filterByName, filterByEmail: $filterByEmail) {
             paging {
               total
               pages
@@ -79,7 +79,8 @@ export default function Users() {
           perPage,
           sortBy,
           sortDir,
-          filterByName: filters2?.name
+          filterByName: filters2?.name,
+          filterByEmail: filters2?.email
         }
       })
         .then(res => {
