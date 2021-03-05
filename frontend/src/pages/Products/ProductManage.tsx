@@ -9,6 +9,7 @@ import Product from "../../models/Product";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { Card, CardHeader, CardBody, Row, Col, FormGroup, Label, Input, Form, Button } from "reactstrap";
 import NumberFormat from "react-number-format";
+import Loading from "../../components/Loading";
 
 interface IProductQuery {
   product: Product;
@@ -103,9 +104,7 @@ export default function ProductManage() {
             icon: "success",
             text: "Produto criado com sucesso.",
           })
-            .then(res2 => {
-              history.push(`/products/manage/${res.data.createProduct.id}`);
-            })
+            .then(() => history.push(`/products/manage/${res.data.createProduct.id}`))
         })
         .catch(err => apolloError(err));
     } else {
@@ -122,15 +121,13 @@ export default function ProductManage() {
           data
         },
       })
-        .then(res => {
+        .then(() => {
           SweetAlert.fire({
             title: "Sucesso",
             icon: "success",
             text: "Produto atualizado com sucesso.",
           })
-            .then(res => {
-              history.push(`/products`);
-            });
+            .then(() => history.push(`/products`));
         })
         .catch(err => apolloError(err));
     }
@@ -158,88 +155,92 @@ export default function ProductManage() {
         </CardHeader>
         <CardBody>
           <Form onSubmit={(e) => e.preventDefault()}>
-            <Row>
-              <Col>
-                <FormGroup>
-                  <Label for="name" className="col-form-label">
-                    Nome
-                </Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={preview}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label for="description" className="col-form-label">
-                    Descrição
-                </Label>
-                  <Input
-                    id="description"
-                    type="text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    disabled={preview}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label for="price">
-                    Preço
-                </Label>
-                  <NumberFormat
-                    id="price"
-                    className="form-control"
-                    value={price}
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    decimalScale={2}
-                    fixedDecimalScale
-                    allowNegative={false}
-                    thousandsGroupStyle="thousand"
-                    onValueChange={async ({ floatValue }) => {
-                      setPrice(floatValue || 0);
-                    }}
-                    disabled={preview}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button
-                  type="button"
-                  color="danger"
-                  onClick={() => history.push("/products")}
-                >
-                  <i className="fa fa-arrow-left"></i>
-                    Cancelar
-                </Button>
-              </Col>
-              {canUpdate ? (
-                <Col className="text-right">
-                  {preview ? (
+            {loading ? <Loading /> : (
+              <>
+                <Row>
+                  <Col>
+                    <FormGroup>
+                      <Label for="name" className="col-form-label">
+                        Nome
+                      </Label>
+                      <Input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        disabled={preview}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="description" className="col-form-label">
+                        Descrição
+                      </Label>
+                      <Input
+                        id="description"
+                        type="text"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        disabled={preview}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="price">
+                        Preço
+                    </Label>
+                      <NumberFormat
+                        id="price"
+                        className="form-control"
+                        value={price}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        decimalScale={2}
+                        fixedDecimalScale
+                        allowNegative={false}
+                        thousandsGroupStyle="thousand"
+                        onValueChange={async ({ floatValue }) => {
+                          setPrice(floatValue || 0);
+                        }}
+                        disabled={preview}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
                     <Button
                       type="button"
-                      color="primary"
-                      disabled={loading}
-                      onClick={() => {
-                        setPreview(!preview);
-                        return false;
-                      }}
+                      color="danger"
+                      onClick={() => history.push("/products")}
                     >
-                      <i className="fa fa-edit"></i>
+                      <i className="fa fa-arrow-left"></i>
+                    Cancelar
+                </Button>
+                  </Col>
+                  {canUpdate ? (
+                    <Col className="text-right">
+                      {preview ? (
+                        <Button
+                          type="button"
+                          color="primary"
+                          disabled={loading}
+                          onClick={() => {
+                            setPreview(!preview);
+                            return false;
+                          }}
+                        >
+                          <i className="fa fa-edit"></i>
                       Editar
-                    </Button>
-                  ) : (
-                    <Button type="button" disabled={loading} color="primary" onClick={handleSubmit}>
-                      <i className="fa fa-save"></i>
+                        </Button>
+                      ) : (
+                        <Button type="button" disabled={loading} color="primary" onClick={handleSubmit}>
+                          <i className="fa fa-save"></i>
                       Salvar
-                    </Button>
-                  )}
-                </Col>) : ""}
-            </Row>
+                        </Button>
+                      )}
+                    </Col>) : ""}
+                </Row>
+              </>
+            )}
           </Form>
         </CardBody>
       </Card>

@@ -75,10 +75,10 @@ export class UserInput {
   isSuperAdmin: boolean = false;
 
   @Field(() => [String], { nullable: true })
-  roles?: string[];
+  roleIds?: string[] = [];
 
   @Field(() => [ClaimInput], { nullable: true })
-  claims?: ClaimInput[];
+  claims?: ClaimInput[] = [];
 }
 
 @InputType()
@@ -107,24 +107,12 @@ export class ProfileInput {
   @Field(() => String)
   surname: string;
 
-  @Field(() => String, { nullable: true })
-  document?: string;
-
-  @Field(() => Date, { nullable: true })
-  birthDate?: Date | null;
-
   @IsEmail()
   @Field(() => String)
   email: string;
 
   @Field(() => String, { nullable: true })
   password?: string | null;
-
-  @Field(() => String, { nullable: true })
-  phone?: string | null;
-
-  @Field(() => String, { nullable: true })
-  mobile?: string | null;
 }
 
 @ObjectType()

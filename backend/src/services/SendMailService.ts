@@ -73,6 +73,7 @@ class SendMailService {
     const npsHeaderPath = path.resolve(
       __dirname,
       "..",
+      "..",
       "views",
       "emails",
       "partials",
@@ -81,6 +82,7 @@ class SendMailService {
     const npsFooterPath = path.resolve(
       __dirname,
       "..",
+      "..",
       "views",
       "emails",
       "partials",
@@ -88,6 +90,7 @@ class SendMailService {
     );
     const npsPath = path.resolve(
       __dirname,
+      "..",
       "..",
       "views",
       "emails",

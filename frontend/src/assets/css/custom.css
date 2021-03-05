@@ -94,3 +94,12 @@ html.color-1 .notification .card .media .media-body span p {
 .jkanban-container .react-kanban-column .kanban-item {
   width: 300px !important;
 }
+
+.tab-pane {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.accordion .card-header {
+  border-bottom: 0;
+}

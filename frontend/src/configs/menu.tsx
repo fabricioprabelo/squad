@@ -39,7 +39,7 @@ let menu: IMenuItem[] = [
     children: [
       {
         type: "collapse-header",
-        text: "Gerenciar produtos:",
+        text: "Gerenciar produtos",
       },
       {
         type: "collapse-item",
@@ -50,6 +50,55 @@ let menu: IMenuItem[] = [
         type: "collapse-item",
         text: "Criar produto",
         link: "/products/manage",
+      },
+    ],
+  },
+  {
+    type: "divider",
+  },
+  {
+    type: "heading",
+    text: "Segurança",
+  },
+  {
+    type: "collapse",
+    icon: "fas fa-fw fa-user-tag",
+    text: "Regras",
+    children: [
+      {
+        type: "collapse-header",
+        text: "Gerenciar regras",
+      },
+      {
+        type: "collapse-item",
+        text: "Lista regras",
+        link: "/roles",
+      },
+      {
+        type: "collapse-item",
+        text: "Criar regra",
+        link: "/roles/manage",
+      },
+    ],
+  },
+  {
+    type: "collapse",
+    icon: "fas fa-fw fa-users",
+    text: "Usuários",
+    children: [
+      {
+        type: "collapse-header",
+        text: "Gerenciar usuários",
+      },
+      {
+        type: "collapse-item",
+        text: "Lista usuários",
+        link: "/users",
+      },
+      {
+        type: "collapse-item",
+        text: "Criar usuário",
+        link: "/users/manage",
       },
     ],
   },

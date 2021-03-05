@@ -4,13 +4,12 @@ import Permission from "../types/Permission";
 import claims from "../configs/claims";
 import Logger from "../support/Logger";
 import PermissionsRepository from "../repositories/PermissionsRepository";
-import { getCustomRepository } from "typeorm";
 
 @Resolver()
 export default class Permissions {
   permissionsRepository: PermissionsRepository;
   constructor() {
-    this.permissionsRepository = getCustomRepository(PermissionsRepository);
+    this.permissionsRepository = new PermissionsRepository();
   }
   @Query(() => [Permission])
   async permissions(@Ctx() ctx?: Context): Promise<Permission[]> {

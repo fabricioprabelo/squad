@@ -1,9 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
-import { SITE_NAME } from "../configs/constants";
-import useAuth from "../hooks/auth";
-import LoginLayout from "../layouts/LoginLayout";
+import { SITE_NAME } from "../../configs/constants";
+import useAuth from "../../hooks/auth";
+import LoginLayout from "../../layouts/LoginLayout";
 import SweetAlert from "sweetalert2";
 
 export default function Login() {
@@ -12,6 +12,7 @@ export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,13 +25,12 @@ export default function Login() {
       return;
     }
 
+    setLoading(true);
     await login(email, password, remember)
       .then(res => {
         if (res) history.push("/");
-      })
-      .catch(err => {
-        console.log(err);
       });
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function Login() {
                       type="email"
                       id="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value?.trim()?.toLowerCase())}
                       className="form-control-user"
                       placeholder="Digite seu e-mail.."
                       required
@@ -67,7 +67,7 @@ export default function Login() {
                       type="password"
                       id="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value?.trim())}
                       className="form-control-user"
                       placeholder="Digite sua senha.."
                       required
@@ -92,13 +92,14 @@ export default function Login() {
                     color="primary"
                     className="btn-user"
                     block
+                    disabled={loading}
                   >
                     Entrar
                   </Button>
                 </Form>
-                <div className="d-none">
+                <div className="text-center">
                   <hr />
-                  <div className="text-center">
+                  <div>
                     <Link
                       to="/forgot-password"
                       className="small"
@@ -106,7 +107,7 @@ export default function Login() {
                       Esqueceu sua senha?
                   </Link>
                   </div>
-                  <div className="text-center">
+                  <div>
                     <Link to="/register" className="small">Cadastre-se</Link>
                   </div>
                 </div>

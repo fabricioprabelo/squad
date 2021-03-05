@@ -31,9 +31,7 @@ export default class Users {
     })
     sortDir: number = -1,
     @Arg("filterByName", { nullable: true }) filterByName: string,
-    @Arg("filterBySurname", { nullable: true }) filterBySurname: string,
     @Arg("filterByEmail", { nullable: true }) filterByEmail: string,
-    @Arg("filterByDocument", { nullable: true }) filterByDocument: string,
     @Ctx() ctx?: Context
   ): Promise<PaginatedUsers> {
     ctx && (await ctx.hasPermission(claims.users));
@@ -44,29 +42,22 @@ export default class Users {
       if (filterByName?.trim())
         where = {
           ...where,
-          name: { $regex: new RegExp(filterByName.trim()), $options: "i" },
-        };
-      if (filterBySurname?.trim())
-        where = {
-          ...where,
-          surname: {
-            $regex: new RegExp(filterBySurname.trim()),
-            $options: "i",
-          },
+          $or: [
+            {
+              name: { $regex: new RegExp(filterByName.trim()), $options: "i" },
+            },
+            {
+              surname: {
+                $regex: new RegExp(filterByName.trim()),
+                $options: "i",
+              },
+            },
+          ],
         };
       if (filterByEmail?.trim())
         where = {
           ...where,
           email: { $regex: new RegExp(filterByEmail.trim()), $options: "i" },
-        };
-      if (filterByDocument?.trim())
-        where = {
-          ...where,
-          document: {
-            $eq:
-              filterByDocument.trim().replace(/\D/gm, "") ||
-              Math.floor(Math.random() * 30 * 24 * 365),
-          },
         };
 
       const user = ctx && (await ctx.getUser());
@@ -132,7 +123,7 @@ export default class Users {
       const schema = Yup.object().shape({
         name: Yup.string().required(),
         surname: Yup.string().required(),
-        email: Yup.string().required(),
+        email: Yup.string().email().required(),
         password: Yup.string().required(),
       });
 
@@ -180,7 +171,7 @@ export default class Users {
       const schema = Yup.object().shape({
         name: Yup.string().required(),
         surname: Yup.string().required(),
-        email: Yup.string().required(),
+        email: Yup.string().email().required(),
       });
 
       await schema.validate(data, {

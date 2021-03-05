@@ -5,44 +5,43 @@ import { Button, Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label,
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { DATE_TIME_FORMAT, RECORDS_PER_PAGE, SITE_NAME } from "../../configs/constants";
 import useAuth from "../../hooks/auth";
-import Product from "../../models/Product";
 import { IDataTableColumn } from "react-data-table-component";
-import { useIntl } from "react-intl";
 import DateTime from "../../support/DateTime";
 import SweetAlert from "sweetalert2";
 import Listing from "../../components/Listing";
 import IPagination from "../../interfaces/IPagination";
+import User from "../../models/User";
 
-interface ProductsFilter {
+interface UserFilter {
   name?: string;
+  email?: string;
 }
 
-interface IPaginatedProducts {
+interface IPaginatedUsers {
   paging: IPagination;
-  list: Product[];
+  list: User[];
 }
 
-interface IProductsQuery {
-  products: IPaginatedProducts;
+interface IUsersQuery {
+  users: IPaginatedUsers;
 }
 
-export default function Products() {
-  const intl = useIntl();
+export default function Users() {
   const history = useHistory();
   const { hasPermission, client, apolloError } = useAuth();
-  const [selectedRows, setSelectedRows] = useState<Product[]>([]);
+  const [selectedRows, setSelectedRows] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [toggleCleared, setToggleCleared] = useState<boolean>(false);
-  const [data, setData] = useState<Product[]>([]);
+  const [data, setData] = useState<User[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(RECORDS_PER_PAGE);
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortDir, setSortDir] = useState<number>(1);
-  const [filters, setFilters] = useState<ProductsFilter>({});
-  const [filters2, setFilters2] = useState<ProductsFilter>({});
-  const [canDelete] = useState<boolean>(() => hasPermission("Products:Delete"));
+  const [filters, setFilters] = useState<UserFilter>({});
+  const [filters2, setFilters2] = useState<UserFilter>({});
+  const [canDelete] = useState<boolean>(() => hasPermission("Users:Delete"));
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,10 +52,10 @@ export default function Products() {
   const handleData = useCallback(async () => {
     setLoading(true);
     if (!loaded)
-      await client.query<IProductsQuery>({
+      await client.query<IUsersQuery>({
         query: gql`
-        query products($sortDir: Int, $sortBy: String, $perPage: Int, $page: Int, $filterByName: String) {
-          products(sortDir: $sortDir, sortBy: $sortBy, perPage: $perPage, page: $page, filterByName: $filterByName) {
+        query users($sortDir: Int, $sortBy: String, $perPage: Int, $page: Int, $filterByName: String) {
+          users(sortDir: $sortDir, sortBy: $sortBy, perPage: $perPage, page: $page, filterByName: $filterByName) {
             paging {
               total
               pages
@@ -68,8 +67,9 @@ export default function Products() {
               createdAt
               updatedAt
               name
-              description
-              price
+              surname
+              email
+              isActivated
             }
           }
         }
@@ -83,17 +83,17 @@ export default function Products() {
         }
       })
         .then(res => {
-          setTotal(res.data.products.paging.total);
-          setPage(res.data.products.paging.currentPage);
-          setPerPage(res.data.products.paging.perPage);
-          setData(res.data.products.list);
+          setTotal(res.data.users.paging.total);
+          setPage(res.data.users.paging.currentPage);
+          setPerPage(res.data.users.paging.perPage);
+          setData(res.data.users.list);
         })
         .catch(err => apolloError(err));
     setLoading(false);
     setLoaded(true);
   }, [client, apolloError, page, perPage, sortBy, sortDir, filters2, loaded]);
 
-  const tableColumns: IDataTableColumn<Product>[] = [
+  const tableColumns: IDataTableColumn<User>[] = [
     {
       name: "ID",
       selector: "id",
@@ -108,13 +108,26 @@ export default function Products() {
       center: false,
     },
     {
-      name: "Preço",
-      selector: "price",
+      name: "Sobrenome",
+      selector: "surname",
+      sortable: true,
+      center: false,
+    },
+    {
+      name: "E-mail",
+      selector: "email",
+      sortable: true,
+      center: false,
+    },
+    {
+      name: "Ativo",
+      selector: "isActivated",
       sortable: true,
       center: true,
-      width: "120px",
       format: (row) => {
-        return intl.formatNumber(row.price, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+        return row.isActivated
+          ? "Sim"
+          : "Não"
       }
     },
     {
@@ -143,9 +156,9 @@ export default function Products() {
     },
   ];
 
-  const handleUpdateRecord = (row: Product) => {
-    if (hasPermission("Products:Product"))
-      history.push(`/products/manage/${row.id}`);
+  const handleUpdateRecord = (row: User) => {
+    if (hasPermission("Users:User"))
+      history.push(`/users/manage/${row.id}`);
   };
 
   const handleRowSelected = useCallback((state) => {
@@ -168,8 +181,8 @@ export default function Products() {
             for (let row of selectedRows) {
               await client.mutate({
                 mutation: gql`
-                  mutation deleteProduct($id: String!) {
-                    deleteProduct(id: $id) {
+                  mutation deleteUser($id: String!) {
+                    deleteUser(id: $id) {
                         id
                     }
                   }
@@ -201,17 +214,17 @@ export default function Products() {
   }, [client, apolloError, selectedRows, toggleCleared, handleData]);
 
   useEffect(() => {
-    document.title = `${SITE_NAME} :: Produtos`;
+    document.title = `${SITE_NAME} :: Usuários`;
     if (!loaded)
       handleData();
   }, [handleData, loaded]);
 
   return (
     <>
-      <Breadcrumbs title="Produtos" />
+      <Breadcrumbs title="Usuários" />
       <Card className="shadow mb-4">
         <CardHeader className="py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Lista de produtos</h6>
+          <h6 className="m-0 font-weight-bold text-primary">Lista de usuários</h6>
         </CardHeader>
         <CardBody>
           <Form onSubmit={handleSearch}>
@@ -227,6 +240,21 @@ export default function Products() {
                     disabled={loading}
                     onChange={(e) => {
                       setFilters({ ...filters, name: e.target.value });
+                    }}
+                  />
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup>
+                  <Label className="col-form-label">
+                    E-mail
+                  </Label>
+                  <Input
+                    type="text"
+                    value={filters?.email || ""}
+                    disabled={loading}
+                    onChange={(e) => {
+                      setFilters({ ...filters, email: e.target.value });
                     }}
                   />
                 </FormGroup>

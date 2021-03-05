@@ -27,16 +27,36 @@ export default class Roles {
       description: SORT_DESCRIPTION,
     })
     sortDir: number = 1,
+    @Arg("filterByName", { nullable: true }) filterByName: string,
     @Ctx() ctx?: Context
   ): Promise<PaginatedRoles> {
     ctx && (await ctx.hasPermission(claims.roles));
 
     try {
-      await this.rolesRepository.getEntitiesPagination(
+      let where = {};
+
+      if (filterByName?.trim())
+        where = {
+          ...where,
+          $or: [
+            {
+              name: { $regex: new RegExp(filterByName.trim()), $options: "i" },
+            },
+            {
+              description: {
+                $regex: new RegExp(filterByName.trim()),
+                $options: "i",
+              },
+            },
+          ],
+        };
+
+      return await this.rolesRepository.getEntitiesPagination(
         page,
         perPage,
         sortBy,
-        sortDir
+        sortDir,
+        where
       );
     } catch (err) {
       Logger.error(err);

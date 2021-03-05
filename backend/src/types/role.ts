@@ -30,7 +30,7 @@ export class RoleInput {
   description: string;
 
   @Field(() => [ClaimInput], { nullable: true })
-  claims: ClaimInput[];
+  claims: ClaimInput[] = [];
 }
 
 @ObjectType()

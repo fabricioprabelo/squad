@@ -4,9 +4,12 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import useAuth from './hooks/auth';
 import routes from "./configs/route";
 import DefaultLayout from "./layouts/DefaultLayout";
-import NotAuthorized from "./pages/NotAuthorized";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
+import NotAuthorized from "./pages/Errors/NotAuthorized";
+import NotFound from "./pages/Errors/NotFound";
+import Login from "./pages/Authentication/Login";
+import ForgotPassword from "./pages/Authentication/ForgotPassword";
+import ResetPassword from "./pages/Authentication/ResetPassword";
+import Register from "./pages/Authentication/Register";
 
 export default function Routes() {
   const isMountedRef = useRef(false);
@@ -24,6 +27,9 @@ export default function Routes() {
     <BrowserRouter basename="/">
       <Switch>
         <Route path={`${process.env.PUBLIC_URL}/login`} exact component={Login} />
+        <Route path={`${process.env.PUBLIC_URL}/forgot-password`} exact component={ForgotPassword} />
+        <Route path={`${process.env.PUBLIC_URL}/reset-password`} exact component={ResetPassword} />
+        <Route path={`${process.env.PUBLIC_URL}/register`} exact component={Register} />
         {isLoggedIn ? (
           <DefaultLayout>
             <TransitionGroup>

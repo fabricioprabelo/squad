@@ -268,14 +268,14 @@ class UsersRepository
         if (role) roles.push(role);
       }
     } else {
-      const role = await Role.findOne({ name: "common" });
+      const role = await Role.findOne({ name: "admin" });
       if (role) {
         model.roleIds = [role.id];
         roles.push(role);
       }
     }
     model.roles = roles;
-    if (USER_ACTIVATION_EMAIL) {
+    if (!!USER_ACTIVATION_EMAIL) {
       await SendMailService.execute(
         USER_ACTIVATION_EMAIL,
         `Olá, o usuário ${model.name} está pendente de ativação!`,
@@ -283,21 +283,6 @@ class UsersRepository
         "activateUser"
       );
     }
-    return model;
-  }
-
-  async updateProfile(model: User, data: ProfileInput): Promise<User> {
-    model = Object.assign(model, data);
-    delete model.roles;
-    await model.save();
-    let roles: Role[] = [];
-    if (model.roleIds.length) {
-      for (const roleId of model.roleIds) {
-        const role = await Role.findOne(roleId);
-        if (role) roles.push(role);
-      }
-    }
-    model.roles = roles;
     return model;
   }
 
@@ -325,6 +310,39 @@ class UsersRepository
   }
 
   async updateEntity(model: User, data: UserInput): Promise<User> {
+    if (data.password.trim()) {
+      const salt = bcrypt.genSaltSync(10);
+      data.password = bcrypt.hashSync(data.password.trim(), salt);
+    } else {
+      delete data.password;
+    }
+    delete model.roles;
+    let roles: Role[] = [];
+    let rolesIds: ObjectID[] = [];
+    if (data.roleIds.length) {
+      for (const roleId of data.roleIds) {
+        const role = await Role.findOne(roleId);
+        if (role) {
+          roles.push(role);
+          rolesIds.push(role.id);
+        }
+      }
+    }
+    delete data.roleIds;
+    model = Object.assign(model, data);
+    model.roleIds = rolesIds;
+    await model.save();
+    model.roles = roles;
+    return model;
+  }
+
+  async updateProfile(model: User, data: ProfileInput): Promise<User> {
+    if (data.password.trim()) {
+      const salt = bcrypt.genSaltSync(10);
+      data.password = bcrypt.hashSync(data.password.trim(), salt);
+    } else {
+      delete data.password;
+    }
     delete model.roles;
     model = Object.assign(model, data);
     await model.save();

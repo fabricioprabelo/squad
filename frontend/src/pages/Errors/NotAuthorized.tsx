@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { SITE_NAME } from "../configs/constants";
+import { SITE_NAME } from "../../configs/constants";
 
 export default function NotAuthorized() {
   useEffect(() => {

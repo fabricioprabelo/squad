@@ -6,6 +6,7 @@ export default interface User extends SoftDeleteModel {
   name: string;
   surname: string;
   email: string;
+  password?: string | null;
   isActivated: boolean;
   isSuperAdmin: boolean;
   photo: string | null;

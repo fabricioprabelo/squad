@@ -3,7 +3,7 @@ import claims from "../configs/claims";
 import Permission from "../types/Permission";
 
 @EntityRepository(Permission)
-class PermissionsRepository extends Repository<Permission> {
+class PermissionsRepository {
   getEntities(): Permission[] {
     let policyModules: Permission[] = [];
     for (const [key, value] of Object.entries(claims)) {

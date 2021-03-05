@@ -10,7 +10,6 @@ import {
 } from "../configs/constants";
 import Token from "../models/Token";
 import { ApolloProvider, gql } from '@apollo/client';
-import Login from "../models/Login";
 import {
   ApolloLink,
   ApolloClient,
@@ -20,6 +19,7 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import SweetAlert from "sweetalert2";
+import { Login } from "../models/Account";
 
 export interface IAuthContext {
   loading: boolean;
@@ -41,7 +41,7 @@ interface IAuthProviderProps {
   children?: ReactNode
 }
 
-interface IQueryLogin {
+interface ILoginQuery {
   login: Login;
 }
 
@@ -132,7 +132,7 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   // Initiate authenticated link
   const authLink: ApolloLink = setContext((_, { headers, ...context }) => {
     // get the authentication token from local storage if it exists
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     return {
       headers: {
         ...headers,
@@ -160,7 +160,6 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   });
 
   function apolloError(error: any) {
-    console.log(error);
     if (error?.graphQLErrors?.length) {
       error?.graphQLErrors?.map((err: any) => {
         if (typeof err?.extensions?.exception?.validationErrors !== "undefined") {
@@ -226,7 +225,7 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     email = email.trim().toLowerCase();
     password = password.trim();
 
-    return await client.query<IQueryLogin>({
+    return await client.query<ILoginQuery>({
       query: gql`
         query login($email: String!, $password: String!, $remember: Boolean) {
           login(email: $email, password: $password, remember: $remember) {
@@ -277,7 +276,6 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
         return true;
       })
       .catch(err => {
-        console.log("Erro");
         apolloError(err);
         return false;
       });
