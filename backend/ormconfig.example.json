@@ -1,0 +1,10 @@
+{
+    "type": "mongodb",
+    "host": "database host",
+    "port": 27017,
+    "database": "database",
+    "username": "database username",
+    "password": "database password",
+    "useUnifiedTopology": true,
+    "entities": ["src/types/*.ts"]
+}
