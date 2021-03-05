@@ -2,8 +2,8 @@
     "type": "mongodb",
     "host": "localhost",
     "port": 27017,
-    "username": "squads",
-    "database": "squads",
+    "username": "squad",
+    "database": "squad",
     "password": "jxIgWczIREWQmgkzWAmsy26JJKuNLVnw",
     "useUnifiedTopology": true,
     "entities": ["src/types/*.ts"]
