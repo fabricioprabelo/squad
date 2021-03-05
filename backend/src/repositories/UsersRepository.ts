@@ -358,11 +358,9 @@ class UsersRepository
   }
 
   async deleteEntity(model: User): Promise<User> {
-    let oldModel = new User();
-    oldModel = Object.assign(oldModel, model);
-    delete model.roles;
-    await model.remove();
-    return oldModel;
+    await User.delete(model.id);
+
+    return model;
   }
 
   async getEntities(options?: FindManyOptions<User>): Promise<User[]> {

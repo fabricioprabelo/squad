@@ -21,7 +21,7 @@ export default function ProductManage() {
   const [pageTitle, setPageTitle] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [price, setPrice] = useState<number>();
+  const [price, setPrice] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [preview, setPreview] = useState<boolean>(() => !!id);
   const [canView] = useState<boolean>(() => hasPermission("Products:Product"));
@@ -199,7 +199,7 @@ export default function ProductManage() {
                     allowNegative={false}
                     thousandsGroupStyle="thousand"
                     onValueChange={async ({ floatValue }) => {
-                      setPrice(floatValue);
+                      setPrice(floatValue || 0);
                     }}
                     disabled={preview}
                   />

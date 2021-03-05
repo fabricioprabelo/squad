@@ -82,11 +82,9 @@ class RolesRepository
     if (model.name === "admin" || model.name === "common")
       throw new Error("Não é possível remover uma regra padrão.");
 
-    let old = new Role();
-    old = Object.assign(old, model);
-    await model.remove();
+    await Role.delete(model.id);
 
-    return old;
+    return model;
   }
 
   async getEntities(options?: FindManyOptions<Role>): Promise<Role[]> {

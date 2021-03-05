@@ -59,11 +59,9 @@ class ProductsRepository
   }
 
   async deleteEntity(model: Product): Promise<Product> {
-    let old = new Product();
-    old = Object.assign(old, model);
-    await model.remove();
+    await Product.delete(model.id);
 
-    return old;
+    return model;
   }
 
   async getEntities(options?: FindManyOptions<Product>): Promise<Product[]> {
