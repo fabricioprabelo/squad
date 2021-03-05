@@ -34,14 +34,14 @@ export default function Routes() {
           <DefaultLayout>
             <TransitionGroup>
               <Switch>
-                {routes?.map(({ path, scopes, Component }) => (
+                {routes?.map(({ path, permissions, Component }) => (
                   <Route
                     key={path}
                     exact
                     path={`${process.env.PUBLIC_URL}${path}`}
                     children={(props: RouteChildrenProps<any>) => {
-                      if (scopes) {
-                        if (!hasAnyPermissions(scopes))
+                      if (permissions) {
+                        if (!hasAnyPermissions(permissions))
                           return (
                             <CSSTransition
                               in={props.match !== null}

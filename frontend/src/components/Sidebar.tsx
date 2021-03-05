@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { Collapse, NavItem } from "reactstrap";
 import { SITE_NAME } from "../configs/constants";
 import menus, { IMenuItem } from "../configs/menu";
+import useAuth from "../hooks/auth";
 
 export default function Sidebar() {
+  const { hasAnyPermissions } = useAuth();
   const [mainMenu, setMainMenu] = useState<IMenuItem[]>(menus);
   const [collapseActive, setCollapseActive] = useState<string>("");
 
@@ -63,7 +65,7 @@ export default function Sidebar() {
       </Link>
       <hr className="sidebar-divider my-0" />
       {mainMenu.map((item, index) => {
-        if (item.type === "divider") {
+        if (item.type === "divider" && (!item?.permissions || hasAnyPermissions(item.permissions))) {
           return <hr key={`divider-${index}`} className="sidebar-divider" />;
         } else if (item.type === "heading") {
           return (
@@ -71,7 +73,7 @@ export default function Sidebar() {
               {item.text}
             </div>
           );
-        } else if (item.type === "item") {
+        } else if (item.type === "item" && (!item?.permissions || hasAnyPermissions(item.permissions))) {
           return (
             <NavItem key={`navItem-${index}`} active={item.active}>
               <Link
@@ -83,7 +85,7 @@ export default function Sidebar() {
               </Link>
             </NavItem>
           );
-        } else if (item.type === "collapse") {
+        } else if (item.type === "collapse" && (!item?.permissions || hasAnyPermissions(item.permissions))) {
           return (
             <NavItem key={`navItem-${index}`} active={item.active}>
               <Link
@@ -121,7 +123,7 @@ export default function Sidebar() {
                           {child.text}
                         </h6>
                       );
-                    else if (child.type === "collapse-item")
+                    else if (child.type === "collapse-item" && (!child?.permissions || hasAnyPermissions(child.permissions)))
                       return (
                         <Link
                           key={`collapseItem-${index}-${childIndex}`}
@@ -137,7 +139,7 @@ export default function Sidebar() {
               </Collapse>
             </NavItem>
           );
-        } else if (item.type === "card") {
+        } else if (item.type === "card" && (!item?.permissions || hasAnyPermissions(item.permissions))) {
           return (
             <div
               key={`navCard-${index}`}

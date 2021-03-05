@@ -294,8 +294,8 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     if (token) {
       const isAdmin = token.rol.includes("admin");
       const isSuperAdmin = token.spa;
-      const hasScope = token.clm.includes(permission);
-      if (isSuperAdmin || isAdmin || hasScope) return true;
+      const hasPermission = token.clm.includes(permission);
+      if (isSuperAdmin || isAdmin || hasPermission) return true;
     }
     return false;
   }

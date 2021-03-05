@@ -5,8 +5,6 @@ const claims = Object.freeze({
   updateProduct: "Products:Update",
   deleteProduct: "Products:Delete",
 
-  permissions: "Permissions:Permissions",
-
   users: "Users:Users",
   user: "Users:User",
   createUser: "Users:Create",
@@ -14,8 +12,8 @@ const claims = Object.freeze({
   deleteUser: "Users:Delete",
   profileUser: "Users:Profile",
 
-  role: "Roles:Role",
   roles: "Roles:Roles",
+  role: "Roles:Role",
   createRole: "Roles:Create",
   updateRole: "Roles:Update",
   deleteRole: "Roles:Delete",

@@ -8,7 +8,7 @@ import UserManage from "../pages/Users/UserManage";
 
 export interface Route {
   path: string;
-  scopes?: string[];
+  permissions?: string[];
   Component: any;
 }
 export interface CrudParam {
@@ -17,15 +17,15 @@ export interface CrudParam {
 
 const routes: Route[] = [
   { path: `${process.env.PUBLIC_URL}/`, Component: Home },
-  { path: `${process.env.PUBLIC_URL}/products`, Component: Products },
-  { path: `${process.env.PUBLIC_URL}/products/manage`, Component: ProductManage },
-  { path: `${process.env.PUBLIC_URL}/products/manage/:id`, Component: ProductManage },
-  { path: `${process.env.PUBLIC_URL}/roles`, Component: Roles },
-  { path: `${process.env.PUBLIC_URL}/roles/manage`, Component: RoleManage },
-  { path: `${process.env.PUBLIC_URL}/roles/manage/:id`, Component: RoleManage },
-  { path: `${process.env.PUBLIC_URL}/users`, Component: Users },
-  { path: `${process.env.PUBLIC_URL}/users/manage`, Component: UserManage },
-  { path: `${process.env.PUBLIC_URL}/users/manage/:id`, Component: UserManage },
+  { path: `${process.env.PUBLIC_URL}/products`, Component: Products, permissions: ["Products:Products"] },
+  { path: `${process.env.PUBLIC_URL}/products/manage`, Component: ProductManage, permissions: ["Products:Product", "Products:Create", "Products: Upgrade"] },
+  { path: `${process.env.PUBLIC_URL}/products/manage/:id`, Component: ProductManage, permissions: ["Products:Product", "Products:Update"] },
+  { path: `${process.env.PUBLIC_URL}/roles`, Component: Roles, permissions: ["Roles:Roles"] },
+  { path: `${process.env.PUBLIC_URL}/roles/manage`, Component: RoleManage, permissions: ["Roles:Role", "Roles:Create", "Roles: Upgrade"] },
+  { path: `${process.env.PUBLIC_URL}/roles/manage/:id`, Component: RoleManage, permissions: ["Roles:Role", "Roles:Update"] },
+  { path: `${process.env.PUBLIC_URL}/users`, Component: Users, permissions: ["Users:Users"] },
+  { path: `${process.env.PUBLIC_URL}/users/manage`, Component: UserManage, permissions: ["Users:User", "Users:Create", "Users: Upgrade"] },
+  { path: `${process.env.PUBLIC_URL}/users/manage/:id`, Component: UserManage, permissions: ["Users:User", "Users:Update"] },
 ];
 
 export default routes;
