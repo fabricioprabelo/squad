@@ -196,7 +196,7 @@ class UsersRepository
     const previewUrl = await SendMailService.execute(
       email,
       `Olá ${model.name}, esqueceu sua senha?`,
-      { model, url },
+      { ...model, url },
       "forgotPassword"
     );
 
@@ -259,19 +259,17 @@ class UsersRepository
     delete data.passwordConfirmation;
     let model = new User();
     model = Object.assign(model, data);
-    model.isActivated = USER_ACTIVATION_EMAIL !== "";
+    const role = await Role.findOne({ name: "admin" });
+    if (role) {
+      model.roleIds.push(role.id);
+    }
+    model.isActivated = !!!USER_ACTIVATION_EMAIL;
     await model.save();
     let roles: Role[] = [];
     if (model.roleIds.length) {
       for (const roleId of model.roleIds) {
         const role = await Role.findOne(roleId);
         if (role) roles.push(role);
-      }
-    } else {
-      const role = await Role.findOne({ name: "admin" });
-      if (role) {
-        model.roleIds = [role.id];
-        roles.push(role);
       }
     }
     model.roles = roles;

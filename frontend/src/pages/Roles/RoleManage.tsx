@@ -299,11 +299,11 @@ export default function RoleManage() {
                       {permissions?.map((item, index) => (
                         <Card key={`card-${index}`}>
                           <CardHeader key={`card-header-${index}`}>
-                            <Accordion.Toggle as={CardHeader} eventKey="0">
+                            <Accordion.Toggle as={CardHeader} eventKey={String(index)}>
                               {item.module}
                             </Accordion.Toggle>
                           </CardHeader>
-                          <Accordion.Collapse eventKey="0">
+                          <Accordion.Collapse eventKey={String(index)}>
                             <CardBody key={`card-body-${index}`}>
                               <Row>
                                 {item.claims?.map((claim, indexClaim) => (
