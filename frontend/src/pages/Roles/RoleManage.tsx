@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { CrudParam } from "../../configs/route";
 import useAuth from "../../hooks/auth";
@@ -23,6 +23,7 @@ interface IPermissionsQuery {
 }
 
 export default function RoleManage() {
+  const isMountedRef = useRef<boolean>(false);
   const history = useHistory();
   const { hasPermission, client, apolloError } = useAuth();
   const { id } = useParams<CrudParam>();
@@ -107,18 +108,20 @@ export default function RoleManage() {
         })
       ])
         .then(res => {
-          setPermissions(res[0].data.permissions || []);
-          setName(res[1].data.role.name || "");
-          setDescription(res[1].data.role.description || "");
-          if (res[1].data.role.claims?.length) {
-            let claimsObj = {};
-            let claimsArray: string[] = [];
-            for (const claim of res[1].data.role.claims) {
-              claimsArray.push(`${claim.claimType}:${claim.claimValue}`);
-              claimsObj = { ...claimsObj, [`${claim.claimType}:${claim.claimValue}`]: true };
+          if (isMountedRef.current) {
+            setPermissions(res[0].data.permissions || []);
+            setName(res[1].data.role.name || "");
+            setDescription(res[1].data.role.description || "");
+            if (res[1].data.role.claims?.length) {
+              let claimsObj = {};
+              let claimsArray: string[] = [];
+              for (const claim of res[1].data.role.claims) {
+                claimsArray.push(`${claim.claimType}:${claim.claimValue}`);
+                claimsObj = { ...claimsObj, [`${claim.claimType}:${claim.claimValue}`]: true };
+              }
+              setClaims(claimsArray);
+              setSelectedClaims(claimsObj);
             }
-            setClaims(claimsArray);
-            setSelectedClaims(claimsObj);
           }
         })
         .catch(err => apolloError(err));
@@ -140,7 +143,11 @@ export default function RoleManage() {
           }
         `,
       })
-        .then(res => setPermissions(res.data.permissions || []))
+        .then(res => {
+          if (isMountedRef.current) {
+            setPermissions(res.data.permissions || []);
+          }
+        })
         .catch(err => apolloError(err));
       setLoading(false);
     }
@@ -219,6 +226,7 @@ export default function RoleManage() {
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     const title = preview
       ? "Visualizar regra"
       : id
@@ -228,6 +236,7 @@ export default function RoleManage() {
 
     document.title = `${SITE_NAME} :: ${title}`;
     handleData();
+    return () => { isMountedRef.current = false }
   }, [handleData, preview, id]);
 
   return (

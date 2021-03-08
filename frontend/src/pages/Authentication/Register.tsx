@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { SITE_NAME } from "../../configs/constants";
@@ -13,6 +13,7 @@ interface IRegisterQuery {
 }
 
 export default function Register() {
+  const isMountedRef = useRef<boolean>(false);
   const { client, apolloError } = useAuth();
   const history = useHistory();
   const location = useLocation();
@@ -106,7 +107,9 @@ export default function Register() {
   }
 
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: Cadastro`;
+    return () => { isMountedRef.current = false }
   }, [location]);
 
   return (
@@ -118,7 +121,7 @@ export default function Register() {
             <Col lg="6">
               <div className="p-5">
                 <div className="text-center">
-                  <h1 className="h4 text-gray-900 mb-4">Esqueceu Sua Senha?</h1>
+                  <h1 className="h4 text-gray-900 mb-4">Cadastre-se</h1>
                   <p className="mb-4">Nós entendemos, coisas assim acontecem.
                   Basta inserir seu endereço de e-mail abaixo e enviaremos um
                   link para redefinir sua senha!</p>

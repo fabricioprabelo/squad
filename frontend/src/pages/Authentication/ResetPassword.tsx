@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { SITE_NAME } from "../../configs/constants";
@@ -14,6 +14,7 @@ interface IResetPasswordQuery {
 }
 
 export default function ResetPassword() {
+  const isMountedRef = useRef<boolean>(false);
   const { client, apolloError } = useAuth();
   const history = useHistory();
   const location = useLocation();
@@ -91,6 +92,7 @@ export default function ResetPassword() {
   }
 
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: Redefinição de senha`;
 
     const query = queryString.parse(location.search);
@@ -100,6 +102,7 @@ export default function ResetPassword() {
 
     setEmail(email || "");
     setCode(token || "");
+    return () => { isMountedRef.current = false }
   }, [location]);
 
   return (

@@ -21,3 +21,5 @@ export const TIMEZONE = timezones.includes(process.env.REACT_APP_TIMEZONE || "")
   ? process.env.REACT_APP_TIMEZONE?.trim() || "America/Sao_Paulo"
   : "America/Sao_Paulo";
 export const ACCESS_DENIED = "Desculpe, você não possui privilégios suficientes para acessar esta página.";
+export const MAX_UPLOAD_SIZE = Number(process.env.MAX_UPLOAD_SIZE?.trim() || 10) || 10;
+export const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE * 1024 * 1024;

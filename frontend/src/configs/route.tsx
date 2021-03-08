@@ -4,6 +4,7 @@ import ProductManage from "../pages/Products/ProductManage";
 import Roles from "../pages/Roles";
 import RoleManage from "../pages/Roles/RoleManage";
 import Users from "../pages/Users";
+import Profile from "../pages/Users/Profile";
 import UserManage from "../pages/Users/UserManage";
 
 export interface Route {
@@ -17,6 +18,7 @@ export interface CrudParam {
 
 const routes: Route[] = [
   { path: `${process.env.PUBLIC_URL}/`, Component: Home },
+  { path: `${process.env.PUBLIC_URL}/profile`, Component: Profile },
   { path: `${process.env.PUBLIC_URL}/products`, Component: Products, permissions: ["Products:Products"] },
   { path: `${process.env.PUBLIC_URL}/products/manage`, Component: ProductManage, permissions: ["Products:Product", "Products:Create", "Products: Upgrade"] },
   { path: `${process.env.PUBLIC_URL}/products/manage/:id`, Component: ProductManage, permissions: ["Products:Product", "Products:Update"] },

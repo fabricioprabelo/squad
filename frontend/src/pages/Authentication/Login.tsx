@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { SITE_NAME } from "../../configs/constants";
@@ -7,6 +7,7 @@ import LoginLayout from "../../layouts/LoginLayout";
 import SweetAlert from "sweetalert2";
 
 export default function Login() {
+  const isMountedRef = useRef<boolean>(false);
   const { login } = useAuth();
   const history = useHistory();
   const [email, setEmail] = useState<string>("");
@@ -34,7 +35,9 @@ export default function Login() {
   }
 
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: Login`;
+    return () => { isMountedRef.current = false; }
   }, []);
 
   return (

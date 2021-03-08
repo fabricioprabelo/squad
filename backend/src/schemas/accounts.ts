@@ -73,6 +73,18 @@ export default class Accounts {
     }
   }
 
+  @Query(() => User)
+  async profile(@Ctx() ctx?: Context): Promise<User | undefined> {
+    try {
+      const model = await ctx.getUser();
+
+      return model;
+    } catch (err) {
+      Logger.error(err);
+      return err;
+    }
+  }
+
   @Query(() => ForgotPassword)
   async forgotPassword(
     @Arg("email") email: string,
@@ -179,7 +191,7 @@ export default class Accounts {
   }
 
   @Mutation(() => User)
-  async profile(
+  async updateProfile(
     @Arg("data") data: ProfileInput,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {
@@ -227,7 +239,7 @@ export default class Accounts {
   }
 
   @Mutation(() => User)
-  async profileAvatarUpload(
+  async uploadProfilePhoto(
     @Arg("file", () => GraphQLUpload) file: FileInput,
     @Ctx() ctx?: Context
   ): Promise<User | undefined> {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { CrudParam } from "../../configs/route";
 import useAuth from "../../hooks/auth";
@@ -28,6 +28,7 @@ interface IRolesDropdownQuery {
 }
 
 export default function UserManage() {
+  const isMountedRef = useRef<boolean>(false);
   const history = useHistory();
   const { hasPermission, client, apolloError } = useAuth();
   const { id } = useParams<CrudParam>();
@@ -145,32 +146,34 @@ export default function UserManage() {
         })
       ])
         .then(res => {
-          setPermissions(res[0].data.permissions || []);
-          setRoles(res[1].data.rolesDropdown || []);
-          setName(res[2].data.user.name || "");
-          setSurname(res[2].data.user.surname || "");
-          setEmail(res[2].data.user.email || "");
-          setPassword(res[2].data.user.password || "");
-          setIsActivated(res[2].data.user.isActivated || false);
-          if (res[2].data.user.roles?.length) {
-            let rolesObj = {};
-            let rolesArray: string[] = [];
-            for (const role of res[2].data.user.roles) {
-              rolesArray.push(role.id);
-              rolesObj = { ...rolesObj, [role.id]: true };
+          if (isMountedRef.current) {
+            setPermissions(res[0].data.permissions || []);
+            setRoles(res[1].data.rolesDropdown || []);
+            setName(res[2].data.user.name || "");
+            setSurname(res[2].data.user.surname || "");
+            setEmail(res[2].data.user.email || "");
+            setPassword(res[2].data.user.password || "");
+            setIsActivated(res[2].data.user.isActivated || false);
+            if (res[2].data.user.roles?.length) {
+              let rolesObj = {};
+              let rolesArray: string[] = [];
+              for (const role of res[2].data.user.roles) {
+                rolesArray.push(role.id);
+                rolesObj = { ...rolesObj, [role.id]: true };
+              }
+              setUserRoles(rolesArray);
+              setSelectedRoles(rolesObj);
             }
-            setUserRoles(rolesArray);
-            setSelectedRoles(rolesObj);
-          }
-          if (res[2].data.user.claims?.length) {
-            let claimsObj = {};
-            let claimsArray: string[] = [];
-            for (const claim of res[2].data.user.claims) {
-              claimsArray.push(`${claim.claimType}:${claim.claimValue}`);
-              claimsObj = { ...claimsObj, [`${claim.claimType}:${claim.claimValue}`]: true };
+            if (res[2].data.user.claims?.length) {
+              let claimsObj = {};
+              let claimsArray: string[] = [];
+              for (const claim of res[2].data.user.claims) {
+                claimsArray.push(`${claim.claimType}:${claim.claimValue}`);
+                claimsObj = { ...claimsObj, [`${claim.claimType}:${claim.claimValue}`]: true };
+              }
+              setClaims(claimsArray);
+              setSelectedClaims(claimsObj);
             }
-            setClaims(claimsArray);
-            setSelectedClaims(claimsObj);
           }
         })
         .catch(err => apolloError(err));
@@ -205,8 +208,10 @@ export default function UserManage() {
         }),
       ])
         .then(res => {
-          setPermissions(res[0].data.permissions || []);
-          setRoles(res[1].data.rolesDropdown || []);
+          if (isMountedRef.current) {
+            setPermissions(res[0].data.permissions || []);
+            setRoles(res[1].data.rolesDropdown || []);
+          }
         })
         .catch(err => apolloError(err));
       setLoading(false);
@@ -290,6 +295,7 @@ export default function UserManage() {
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     const title = preview
       ? "Visualizar usuário"
       : id
@@ -299,6 +305,7 @@ export default function UserManage() {
 
     document.title = `${SITE_NAME} :: ${title}`;
     handleData();
+    return () => { isMountedRef.current = false }
   }, [handleData, preview, id]);
 
   return (

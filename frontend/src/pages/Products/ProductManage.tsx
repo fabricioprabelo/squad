@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { CrudParam } from "../../configs/route";
 import useAuth from "../../hooks/auth";
@@ -16,6 +16,7 @@ interface IProductQuery {
 }
 
 export default function ProductManage() {
+  const isMountedRef = useRef<boolean>(false);
   const history = useHistory();
   const { hasPermission, client, apolloError } = useAuth();
   const { id } = useParams<CrudParam>();
@@ -62,9 +63,11 @@ export default function ProductManage() {
         },
       })
         .then(res => {
-          setName(res.data.product.name || "");
-          setDescription(res.data.product.description || "");
-          setPrice(res.data.product.price || 0);
+          if (isMountedRef.current) {
+            setName(res.data.product.name || "");
+            setDescription(res.data.product.description || "");
+            setPrice(res.data.product.price || 0);
+          }
         })
         .catch(err => apolloError(err));
       setLoading(false);
@@ -135,6 +138,7 @@ export default function ProductManage() {
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     const title = preview
       ? "Visualizar produto"
       : id
@@ -144,6 +148,7 @@ export default function ProductManage() {
 
     document.title = `${SITE_NAME} :: ${title}`;
     handleData();
+    return () => { isMountedRef.current = false }
   }, [handleData, preview, id]);
 
   return (

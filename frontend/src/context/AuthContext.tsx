@@ -14,12 +14,12 @@ import {
   ApolloLink,
   ApolloClient,
   InMemoryCache,
-  createHttpLink,
   NormalizedCacheObject,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import SweetAlert from "sweetalert2";
 import { Login } from "../models/Account";
+import { createUploadLink } from 'apollo-upload-client';
 
 export interface IAuthContext {
   loading: boolean;
@@ -28,6 +28,7 @@ export interface IAuthContext {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   user: User | null;
+  setUserData(user: User): void;
   login(email: string, password: string, remember: boolean): Promise<boolean>;
   logout(): void;
   hasPermission(permission: string): boolean;
@@ -109,23 +110,25 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     return false;
   });
   const [user, setUser] = useState<User | null>(() => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    if (!!user && !!token) {
+    const data = localStorage.getItem('user');
+    if (!!data) {
       try {
-        const data = jwt.verify(token, TOKEN_SECRET) as Token;
-        const expires = new Date(data.exp * 1000);
-        if (expires > new Date()) return data.usr;
-      } catch {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
+        const user = JSON.parse(data) as User;
+        return user;
+      } catch (err) {
+        console.log(err);
       }
     }
     return null;
   });
 
+  const setUserData = (user: User) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
+  };
+
   // Instantiate required constructor fields
-  const httpLink: ApolloLink = createHttpLink({
+  const httpLink: ApolloLink = createUploadLink({
     uri: `${GRAPHQL_SERVER}${GRAPHQL_SERVER_PATH}`,
   });
 
@@ -322,6 +325,7 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
       isAdmin,
       isSuperAdmin,
       user,
+      setUserData,
       login,
       logout,
       hasPermission,

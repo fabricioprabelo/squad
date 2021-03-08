@@ -7,6 +7,7 @@ import useAuth from "../hooks/auth";
 
 export default function Sidebar() {
   const { hasAnyPermissions } = useAuth();
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const [mainMenu, setMainMenu] = useState<IMenuItem[]>(menus);
   const [collapseActive, setCollapseActive] = useState<string>("");
 
@@ -31,6 +32,13 @@ export default function Sidebar() {
     item.active = !item.active;
     setMainMenu(menu);
   };
+
+  function handleToggle() {
+    setIsOpen(!isOpen);
+    document.body.classList.toggle("sidebar-toggled");
+    const sidebar = document.getElementsByClassName("sidebar").item(0);
+    sidebar?.classList.toggle("toggled");
+  }
 
   useEffect(() => {
     const currentUrl = window.location.pathname;
@@ -151,6 +159,9 @@ export default function Sidebar() {
         }
         return (<></>);
       })}
+      <div className="text-center d-none d-md-inline">
+        <button className="rounded-circle border-0" id="sidebarToggle" onClick={handleToggle}></button>
+      </div>
     </ul>
   );
 }

@@ -60,9 +60,9 @@ export default class Context {
     );
     try {
       if (this.token && this.token.usr.email) {
-        const user = await this.usersRepository.getEntity({
-          email: this.token.usr.email,
-        });
+        const user = await this.usersRepository.getEntityById(
+          this.token.usr.id
+        );
         if (!user) throw err;
         return user;
       }

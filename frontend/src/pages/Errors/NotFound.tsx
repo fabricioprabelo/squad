@@ -1,10 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SITE_NAME } from "../../configs/constants";
 
 export default function NotFound() {
+  const isMountedRef = useRef<boolean>(false);
+
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: 404 - Não encontrado`;
+    return () => { isMountedRef.current = false }
   }, []);
 
   return (

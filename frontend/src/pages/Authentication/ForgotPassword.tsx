@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button, Card, CardBody, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import { IS_DEVELOPMENT, SITE_NAME } from "../../configs/constants";
@@ -13,6 +13,7 @@ interface IForgotPasswordQuery {
 }
 
 export default function ForgotPassword() {
+  const isMountedRef = useRef<boolean>(false);
   const { client, apolloError } = useAuth();
   const history = useHistory();
   const [email, setEmail] = useState<string>("");
@@ -58,7 +59,9 @@ export default function ForgotPassword() {
   }
 
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: Esqueceu sua senha?`;
+    return () => { isMountedRef.current = false }
   }, []);
 
   return (
@@ -70,7 +73,7 @@ export default function ForgotPassword() {
             <Col lg="6">
               <div className="p-5">
                 <div className="text-center">
-                  <h1 className="h4 text-gray-900 mb-4">Esqueceu Sua Senha?</h1>
+                  <h1 className="h4 text-gray-900 mb-4">Esqueceu sua Senha?</h1>
                   <p className="mb-4">Nós entendemos, coisas assim acontecem.
                   Basta inserir seu endereço de e-mail abaixo e enviaremos um
                   link para redefinir sua senha!</p>

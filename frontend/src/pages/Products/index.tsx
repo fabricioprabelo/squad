@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Button, Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -12,6 +12,7 @@ import DateTime from "../../support/DateTime";
 import SweetAlert from "sweetalert2";
 import Listing from "../../components/Listing";
 import IPagination from "../../interfaces/IPagination";
+import { differenceBy } from 'lodash';
 
 interface ProductsFilter {
   name?: string;
@@ -27,12 +28,12 @@ interface IProductsQuery {
 }
 
 export default function Products() {
+  const isMountedRef = useRef<boolean>(false);
   const intl = useIntl();
   const history = useHistory();
   const { hasPermission, client, apolloError } = useAuth();
   const [selectedRows, setSelectedRows] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [toggleCleared, setToggleCleared] = useState<boolean>(false);
   const [data, setData] = useState<Product[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -46,15 +47,13 @@ export default function Products() {
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoaded(false);
     setFilters2(filters);
   };
 
   const handleData = useCallback(async () => {
     setLoading(true);
-    if (!loaded)
-      await client.query<IProductsQuery>({
-        query: gql`
+    await client.query<IProductsQuery>({
+      query: gql`
         query products($sortDir: Int, $sortBy: String, $perPage: Int, $page: Int, $filterByName: String) {
           products(sortDir: $sortDir, sortBy: $sortBy, perPage: $perPage, page: $page, filterByName: $filterByName) {
             paging {
@@ -74,24 +73,25 @@ export default function Products() {
           }
         }
       `,
-        variables: {
-          page,
-          perPage,
-          sortBy,
-          sortDir,
-          filterByName: filters2?.name
-        }
-      })
-        .then(res => {
+      variables: {
+        page,
+        perPage,
+        sortBy,
+        sortDir,
+        filterByName: filters2?.name
+      }
+    })
+      .then(res => {
+        if (isMountedRef.current) {
           setTotal(res.data.products.paging.total);
           setPage(res.data.products.paging.currentPage);
           setPerPage(res.data.products.paging.perPage);
           setData(res.data.products.list);
-        })
-        .catch(err => apolloError(err));
+        }
+      })
+      .catch(err => apolloError(err));
     setLoading(false);
-    setLoaded(true);
-  }, [client, apolloError, page, perPage, sortBy, sortDir, filters2, loaded]);
+  }, [client, apolloError, page, perPage, sortBy, sortDir, filters2]);
 
   const tableColumns: IDataTableColumn<Product>[] = [
     {
@@ -157,7 +157,7 @@ export default function Products() {
       SweetAlert.fire({
         title: "Exclusão",
         text: "Tem certeza que deseja remover os registros selecionados?",
-        icon: "error",
+        icon: "question",
         cancelButtonText: "Não",
         confirmButtonText: "Sim",
         reverseButtons: true,
@@ -165,6 +165,7 @@ export default function Products() {
       })
         .then(async ({ isConfirmed }) => {
           if (isConfirmed) {
+            let deletedRows: Product[] = [];
             for (let row of selectedRows) {
               await client.mutate({
                 mutation: gql`
@@ -179,6 +180,7 @@ export default function Products() {
                 },
               })
                 .then(() => {
+                  deletedRows.push(row);
                   SweetAlert.fire({
                     title: "Sucesso",
                     icon: "success",
@@ -188,7 +190,7 @@ export default function Products() {
                 .catch(err => apolloError(err));
             }
             setToggleCleared(!toggleCleared);
-            await handleData();
+            setData(differenceBy(data, deletedRows, 'id'));
           }
         });
     };
@@ -198,13 +200,14 @@ export default function Products() {
         Excluir
       </button>
     );
-  }, [client, apolloError, selectedRows, toggleCleared, handleData]);
+  }, [client, apolloError, selectedRows, toggleCleared, data]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     document.title = `${SITE_NAME} :: Produtos`;
-    if (!loaded)
-      handleData();
-  }, [handleData, loaded]);
+    handleData();
+    return () => { isMountedRef.current = false }
+  }, [handleData]);
 
   return (
     <>

@@ -10,7 +10,6 @@ const claims = Object.freeze({
   createUser: "Users:Create",
   updateUser: "Users:Update",
   deleteUser: "Users:Delete",
-  profileUser: "Users:Profile",
 
   roles: "Roles:Roles",
   role: "Roles:Role",
