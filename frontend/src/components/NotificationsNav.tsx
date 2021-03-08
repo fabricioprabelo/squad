@@ -56,6 +56,7 @@ const MESSAGES_SUBSCRIPTION = gql`
 export default function NotificationsNav() {
   const { user, client, apolloError } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageCount, setMessageCount] = useState<number>(0);
   const { data, error, loading } = useSubscription<IMessagesSubscription>(MESSAGES_SUBSCRIPTION);
@@ -80,20 +81,22 @@ export default function NotificationsNav() {
   };
 
   const handleData = useCallback(async () => {
-    await client.query<IMessagesQuery>({
-      query: UNREAD_MESSAGES
-    })
-      .then(res => {
-        res.data.unreadSubscriptionMessages?.forEach(message => {
-          if (!messages.map(msg => msg.id).includes(message.id)) {
-            const msgs = [...messages, message];
-            setMessages(msgs);
-            setMessageCount(msgs.length);
-          }
-        });
+    if (!isLoaded)
+      await client.query<IMessagesQuery>({
+        query: UNREAD_MESSAGES
       })
-      .catch(err => apolloError(err));
-  }, [client, apolloError, messages]);
+        .then(res => {
+          res.data.unreadSubscriptionMessages?.forEach(message => {
+            if (!messages.map(msg => msg.id).includes(message.id)) {
+              const msgs = [...messages, message];
+              setMessages(msgs);
+              setMessageCount(msgs.length);
+            }
+          });
+          setIsLoaded(true);
+        })
+        .catch(err => apolloError(err));
+  }, [client, apolloError, messages, isLoaded]);
 
   useEffect(() => {
     Notification.requestPermission();
