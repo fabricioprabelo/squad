@@ -14,6 +14,7 @@ import useAuth from '../hooks/auth';
 import profileIcon from '../assets/img/user.svg';
 import SweetAlert from "sweetalert2";
 import { GRAPHQL_SERVER } from '../configs/constants';
+import NotificationsNav from './NotificationsNav';
 
 export default function Header() {
   const { logout, user } = useAuth();
@@ -43,6 +44,7 @@ export default function Header() {
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ml-auto" navbar>
+          <NotificationsNav />
           <div className="topbar-divider d-none d-sm-block"></div>
           <Dropdown nav className="no-arrow" isOpen={dropdownOpen} toggle={toggleUser}>
             <DropdownToggle id="userDropdown" tag={Link} to="#javascript" className="nav-link dropdown-toggle">

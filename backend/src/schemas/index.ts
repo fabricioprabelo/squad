@@ -4,12 +4,14 @@ import Roles from "./Roles";
 import Users from "./Users";
 import Permissions from "./Permissions";
 import Products from "./Products";
+import Subscriptions from "./Subscriptions";
 
 const resolvers: NonEmptyArray<any> = [
   Accounts,
   Permissions,
   Products,
   Roles,
+  Subscriptions,
   Users,
 ];
 

@@ -41,9 +41,11 @@
         "reflect-metadata": "^0.1.13",
         "sharp": "^0.27.2",
         "slugify": "^1.4.6",
+        "subscriptions-transport-ws": "^0.9.18",
         "twing": "^5.0.2",
         "type-graphql": "^1.1.1",
         "typeorm": "^0.2.30",
+        "uuid": "^8.3.2",
         "yup": "^0.32.8"
     },
     "devDependencies": {
@@ -63,6 +65,7 @@
         "@types/reflect-metadata": "^0.1.0",
         "@types/sharp": "^0.27.1",
         "@types/supertest": "^2.0.10",
+        "@types/uuid": "^8.3.0",
         "@types/yup": "^0.29.11",
         "better-docs": "^2.3.2",
         "child_process": "^1.0.2",

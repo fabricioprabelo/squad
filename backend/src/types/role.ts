@@ -3,7 +3,6 @@ import { Column, Entity } from "typeorm";
 import { PagingResult } from "../support/Paginating";
 import Claim, { ClaimInput } from "./Claim";
 import { BaseType } from "./Entity";
-import User from "./User";
 
 @Entity("roles")
 @ObjectType()

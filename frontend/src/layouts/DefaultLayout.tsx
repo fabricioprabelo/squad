@@ -6,6 +6,7 @@ import PageTop from "../components/PageTop";
 import Sidebar from "../components/Sidebar";
 import { SITE_NAME } from "../configs/constants";
 import ChildrenProps from "../support/ChildrenProps";
+import { ToastContainer } from "react-toastify";
 
 export default function DefaultLayout({ children }: ChildrenProps) {
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function DefaultLayout({ children }: ChildrenProps) {
         </div>
       </div>
       <PageTop />
+      <ToastContainer />
     </>
   );
 }

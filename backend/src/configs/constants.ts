@@ -31,10 +31,17 @@ export const ENVIRONMENT = env;
 export const IS_PRODUCTION = ENVIRONMENT === "production";
 export const IS_DEVELOPMENT =
   ENVIRONMENT === "test" || ENVIRONMENT === "development";
-export const SERVER_PORT = Number(process.env.SERVER_PORT?.trim()) || 4000;
+export const SERVER_PORT =
+  Number(process.env.SERVER_PORT?.trim() || 4000) || 4000;
+export const SERVER_SSL_PORT =
+  Number(process.env.SERVER_SSL_PORT?.trim() || 400) || 4000;
 export const SERVER_HOST = process.env.SERVER_HOST?.trim() || "localhost";
 export const SERVER_URL =
   process.env.SERVER_URL?.trim() || "http://localhost:4000";
+export const SERVER_SSL_CERT =
+  process.env.SERVER_SSL_CERT?.trim() || "localhost.crt";
+export const SERVER_SSL_KEY =
+  process.env.SERVER_SSL_KEY?.trim() || "localhost.key";
 export const COMPANY_NAME = process.env.COMPANY_NAME?.trim() || "";
 export const COMPANY_URL = process.env.COMPANY_URL?.trim() || "";
 export const COMPANY_ADDRESS = process.env.COMPANY_ADDRESS?.trim() || "";

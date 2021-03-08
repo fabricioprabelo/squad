@@ -6,7 +6,7 @@ import User from "../types/User";
 import { AuthenticationError } from "apollo-server-express";
 import Logger from "../support/Logger";
 import UsersRepository from "../repositories/UsersRepository";
-import { getCustomRepository } from "typeorm";
+import { getCustomRepository, ObjectID } from "typeorm";
 
 /**
  * The Apollo Server Context object that's passed to every resolver that executes
@@ -25,7 +25,7 @@ export default class Context {
   isAdmin: boolean = false;
   isSuperAdmin: boolean = false;
   currentUser: User | null = null;
-  currentUserId: string | null = null;
+  currentUserId: string | ObjectID | null = null;
   usersRepository: UsersRepository;
 
   constructor(request: Request, response: Response) {

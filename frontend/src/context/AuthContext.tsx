@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import {
@@ -15,11 +15,14 @@ import {
   ApolloClient,
   InMemoryCache,
   NormalizedCacheObject,
+  split
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import SweetAlert from "sweetalert2";
 import { Login } from "../models/Account";
 import { createUploadLink } from 'apollo-upload-client';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 
 export interface IAuthContext {
   loading: boolean;
@@ -132,6 +135,17 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     uri: `${GRAPHQL_SERVER}${GRAPHQL_SERVER_PATH}`,
   });
 
+  // Initilize websocket
+  const wsLink = new WebSocketLink({
+    uri: `${window.location.protocol === "https:" ? "wss" : "ws"}://${GRAPHQL_SERVER.substr(7)}/subscriptions`,
+    options: {
+      reconnect: true
+    },
+    connectionParams: {
+      authToken: token ? `Bearer ${token}` : "",
+    },
+  });
+
   // Initiate authenticated link
   const authLink: ApolloLink = setContext((_, { headers, ...context }) => {
     // get the authentication token from local storage if it exists
@@ -145,10 +159,27 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
     };
   });
 
+  // The split function takes three parameters:
+  //
+  // * A function that's called for each operation to execute
+  // * The Link to use for an operation if the function returns a "truthy" value
+  // * The Link to use for an operation if the function returns a "falsy" value
+  const link = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      );
+    },
+    wsLink,
+    authLink.concat(httpLink),
+  );
+
   // Initiate apollo client
   const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
     cache: new InMemoryCache(),
-    link: authLink.concat(httpLink),
+    link,
     connectToDevTools: IS_DEVELOPMENT,
     name: SITE_NAME,
     version: "v1",
@@ -316,6 +347,22 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   }
 
   const toggleLoading = () => setLoading(!loading);
+
+  // function receivedNotifications() {
+  //   new Audio('/notification.mp3').play();
+
+  //   if (Notification.permission === 'granted') {
+  //     new Notification('Chegou uma nova notificação!', {
+  //       body: ``
+  //     });
+  //   } else {
+  //     toast.error("");
+  //   }
+  // }
+
+  useEffect(() => {
+    Notification.requestPermission();
+  }, []);
 
   return (
     <AuthContext.Provider value={{
