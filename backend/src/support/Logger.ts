@@ -7,10 +7,11 @@ import DateTime from "./DateTime";
 class Logger {
   private date: string;
   private path: string;
+  private logger: Bunyan;
 
   constructor() {
     this.date = DateTime.now().format("YYYY-MM-DD");
-    this.path = join(__dirname, "..", "logs");
+    this.path = join(__dirname, "..", "..", "logs");
 
     if (!fs.existsSync(this.path)) fs.mkdirSync(this.path);
 
@@ -21,17 +22,17 @@ class Logger {
         {
           level: LOG_LEVEL,
           type: "file",
-          path: join(__dirname, "..", "logs", `${this.date}.log`),
+          path: join(__dirname, "..", "..", "logs", `${this.date}.log`),
         },
       ],
     };
 
-    Bunyan.createLogger(options);
+    this.logger = Bunyan.createLogger(options);
   }
 
   info(message: string | object): void {
     const time = DateTime.now().format("HH:mm:ss");
-
+    this.logger.info(message);
     console.log(
       "[\x1b[36m%s\x1b[0m]",
       "INFO",
@@ -41,7 +42,7 @@ class Logger {
 
   error(message: string | object): void {
     const time = DateTime.now().format("HH:mm:ss");
-
+    this.logger.error(message);
     console.log(
       "[\x1b[31m%s\x1b[0m]",
       "ERROR",
@@ -51,7 +52,7 @@ class Logger {
 
   warn(message: string | object): void {
     const time = DateTime.now().format("HH:mm:ss");
-
+    this.logger.warn(message);
     console.log(
       "[\x1b[33m%s\x1b[0m]",
       "WARN",
@@ -61,7 +62,7 @@ class Logger {
 
   debug(message: string | object): void {
     const time = DateTime.now().format("HH:mm:ss");
-
+    this.logger.debug(message);
     console.log(
       "[\x1b[28m%s\x1b[0m]",
       "DEBUG",
