@@ -487,7 +487,7 @@ class UsersRepository
       fit: sharp.fit.cover,
     });
 
-    const response = new Promise(async (resolve, reject) =>
+    const response = await new Promise(async (resolve, reject) =>
       createReadStream()
         .pipe(transformer)
         .pipe(createWriteStream(destinationPath))
