@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useState, ReactNode } from "react";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
 import {
@@ -347,22 +347,6 @@ export default function AuthProvider({ children }: IAuthProviderProps) {
   }
 
   const toggleLoading = () => setLoading(!loading);
-
-  // function receivedNotifications() {
-  //   new Audio('/notification.mp3').play();
-
-  //   if (Notification.permission === 'granted') {
-  //     new Notification('Chegou uma nova notificação!', {
-  //       body: ``
-  //     });
-  //   } else {
-  //     toast.error("");
-  //   }
-  // }
-
-  useEffect(() => {
-    Notification.requestPermission();
-  }, []);
 
   return (
     <AuthContext.Provider value={{

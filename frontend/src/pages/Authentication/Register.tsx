@@ -204,7 +204,7 @@ export default function Register() {
                       to="/login"
                       className="small"
                     >
-                      já tem uma conta? Conecte-se!
+                      Já tem uma conta? Conecte-se!
                   </Link>
                   </div>
                 </div>

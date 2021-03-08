@@ -21,7 +21,7 @@ export default class Message extends BaseType {
   @Column()
   isRead: boolean = false;
 
-  @Column()
+  @Column(() => String)
   userId: ObjectID | null = null;
 
   @Field(() => User, { nullable: true })

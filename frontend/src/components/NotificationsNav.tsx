@@ -1,6 +1,7 @@
 import { gql, useSubscription } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import useAuth from '../hooks/auth';
 import Message from '../models/Subscription';
@@ -95,6 +96,10 @@ export default function NotificationsNav() {
   }, [client, apolloError, messages]);
 
   useEffect(() => {
+    Notification.requestPermission();
+  }, []);
+
+  useEffect(() => {
     handleData();
   }, [handleData])
 
@@ -103,6 +108,15 @@ export default function NotificationsNav() {
     if (data) {
       if (user && !messages.map(msg => msg.id).includes(data.subscriptionMessage.id) && data.subscriptionMessage.user?.id === user.id) {
         const msgs = [...messages, data.subscriptionMessage];
+        new Audio('/assets/audio/notification.mp3').play();
+
+        if (Notification.permission === 'granted') {
+          new Notification('Nova notificação', {
+            body: String(data.subscriptionMessage.message)
+          });
+        } else {
+          toast.info(data.subscriptionMessage.message);
+        }
         setMessages(msgs);
         setMessageCount(msgs.length);
       }
