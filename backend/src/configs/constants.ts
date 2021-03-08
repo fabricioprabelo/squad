@@ -34,7 +34,7 @@ export const IS_DEVELOPMENT =
 export const SERVER_PORT =
   Number(process.env.SERVER_PORT?.trim() || 4000) || 4000;
 export const SERVER_SSL_PORT =
-  Number(process.env.SERVER_SSL_PORT?.trim() || 400) || 4000;
+  Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
 export const SERVER_HOST = process.env.SERVER_HOST?.trim() || "localhost";
 export const SERVER_URL =
   process.env.SERVER_URL?.trim() || "http://localhost:4000";
