@@ -75,10 +75,10 @@ export class UserInput {
   isSuperAdmin: boolean = false;
 
   @Field(() => [String], { nullable: true })
-  roleIds?: string[] = [];
+  roleIds: string[];
 
   @Field(() => [ClaimInput], { nullable: true })
-  claims?: ClaimInput[] = [];
+  claims: ClaimInput[];
 }
 
 @InputType()

@@ -1,26 +1,13 @@
 import User from "../types/User";
 import Role from "../types/Role";
 import bcrypt from "bcrypt";
-import { ENVIRONMENT } from "../configs/constants";
 import Connection from "./Connection";
 import Claim from "../types/Claim";
 import claims from "../configs/claims";
 import Logger from "../support/Logger";
 
 class Seeder {
-  async seed() {
-    // Create default application connection
-    Logger.info(
-      `Iniciando conexão com o banco de dados para semear. Modo: ${ENVIRONMENT}`
-    );
-    try {
-      await Connection.defaultAsync();
-    } catch (err) {
-      Logger.error(
-        `Ocorreu um erro ao tentar conexão com o banco de dados. Erro: ${err.message}\n${err.stack}`
-      );
-    }
-
+  async sanitize() {
     try {
       Logger.info(`Sanitizando banco de dados antes de semear.`);
       await User.clear();
@@ -30,7 +17,9 @@ class Seeder {
         `Ocorreu um erro ao tentar sanitizar o banco de dados: ${err.message}\n${err.stack}`
       );
     }
+  }
 
+  async seed() {
     try {
       const salt = bcrypt.genSaltSync(10);
       const password = bcrypt.hashSync("123456", salt);
@@ -135,11 +124,8 @@ class Seeder {
         `Ocorreu um erro ao tentar semar o banco de dados: ${err.message}\n${err.stack}`
       );
     }
-
-    // Finaliza o processo
-    process.exit();
   }
 }
 
-const seeder = new Seeder();
-seeder.seed();
+export default new Seeder();
+

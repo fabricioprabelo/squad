@@ -36,6 +36,8 @@ export const SERVER_PORT =
 export const SERVER_SSL_PORT =
   Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
 export const SERVER_HOST = process.env.SERVER_HOST?.trim() || "localhost";
+  Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
+export const SUBSCRIPTIONS_PATH = process.env.SUBSCRIPTIONS_PATH?.trim() || "/subscriptions";
 export const SERVER_URL =
   process.env.SERVER_URL?.trim() || "http://localhost:4000";
 export const SERVER_SSL_CERT =

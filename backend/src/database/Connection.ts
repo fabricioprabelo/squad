@@ -1,11 +1,20 @@
 import { createConnection } from "typeorm";
+import Logger from "../support/Logger";
 
 class Connection {
   async defaultAsync() {
-    return await createConnection();
+    try {
+      return await createConnection();
+    } catch (err) {
+      Logger.error(err.message);
+    }
   }
   default() {
-    return createConnection();
+    try {
+      return createConnection();
+    } catch (err) {
+      Logger.error(err.message);
+    }
   }
 }
 
