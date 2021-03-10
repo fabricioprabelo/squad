@@ -1,12 +1,6 @@
 import fs from "fs";
-import path from "path";
-import chai from "chai";
 import request from "supertest";
-import { SERVER_HOST, SERVER_PORT } from "../configs/constants";
-
-const expect = chai.expect;
-const url = `http://${SERVER_HOST}:${SERVER_PORT}`;
-const filepath = path.join(__dirname, "token.txt");
+import { expect, filepath, url } from "./variables";
 
 describe("Login", () => {
   it("Should be able to login", (done) => {
@@ -14,8 +8,8 @@ describe("Login", () => {
       .post("/graphql")
       .send({
         query: `
-          query login ($email: String!, $password: String!, $remember: Boolean){
-            login (email: $email, password: $password, remember: $remember) {
+          query login($email: String!, $password: String!, $remember: Boolean){
+            login(email: $email, password: $password, remember: $remember) {
               token
             }
           }

@@ -41,3 +41,5 @@ yarn-error.log*
 docs/
 
 /ormconfig.json
+
+src/tests/*.txt

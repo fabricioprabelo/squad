@@ -1,7 +1,6 @@
 import User from "../types/User";
 import Role from "../types/Role";
 import bcrypt from "bcrypt";
-import Connection from "./Connection";
 import Claim from "../types/Claim";
 import claims from "../configs/claims";
 import Logger from "../support/Logger";
