@@ -1,16 +1,18 @@
 import request from "supertest";
-import { expect, getToken, url } from "./variables";
+import { app, connection } from "../app";
+import { expect, getToken } from "./variables";
 
 let id = null;
 let token = null;
 
 describe("Roles", () => {
-  before(() => {
+  before(async () => {
+    await connection(false);
     token = getToken();
   });
 
   it("Should be able to create role", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -48,7 +50,7 @@ describe("Roles", () => {
    });
 
   it("Should be able to get roles", (done) => {
-     request(url)
+     request(app)
        .post("/graphql")
        .set({Authorization: `Bearer ${token}`})
        .send({
@@ -95,7 +97,7 @@ describe("Roles", () => {
   });
 
   it("Should be able to get the first role from the latest test", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -127,7 +129,7 @@ describe("Roles", () => {
   });
 
   it("Should be able to update role", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -164,7 +166,7 @@ describe("Roles", () => {
   });
 
   it("Should be able to update delete role", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({

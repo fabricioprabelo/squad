@@ -12,9 +12,10 @@
         "seed:dev": "cross-env NODE_ENV=development && tsnd src/database/seed.ts",
         "seed:prod": "cross-env NODE_ENV=production && node build/database/seed.js",
         "build": "tsc -p tsconfig.json",
-        "test": "mocha -r ts-node/register src/tests/*.test.ts",
+        "test": "cross-env NODE_ENV=test && mocha -r ts-node/register src/tests/*.test.ts",
         "graphdocs": "graphdoc -e http://localhost:4000/graphql -f -o ./public/docs",
-        "docs": "jsdoc -c jsdoc.json"
+        "docs": "jsdoc -c jsdoc.json",
+        "cross-env": "cross-env"
     },
     "resolutions": {
         "fs-capacitor": "^6.2.0"
@@ -67,6 +68,7 @@
         "@types/yup": "^0.29.11",
         "better-docs": "^2.3.2",
         "chai": "^4.3.3",
+        "find-open-port": "^2.0.2",
         "jsdoc": "^3.6.6",
         "mocha": "^8.3.1",
         "supertest": "^6.1.3",

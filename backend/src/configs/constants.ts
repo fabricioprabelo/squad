@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import timezones from "../database/data/timezones.json";
 
 // Init dotenv
-const env = process.env.NODE_ENV?.trim()?.toLowerCase() || "development";
+const env = process.env.NODE_ENV || "development";
 const envPath = path.join(process.cwd(), ".env");
 const envDevelopmentPath = path.join(process.cwd(), ".env.development");
 const envProductionPath = path.join(process.cwd(), ".env.production");

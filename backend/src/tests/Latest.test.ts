@@ -5,4 +5,8 @@ describe("Delete token", () => {
     deleteToken();
     done();
   });
+
+  after(() => {
+    process.exit();
+  })
 })

@@ -2043,6 +2043,11 @@ finalhandler@~1.1.2:
     statuses "~1.5.0"
     unpipe "~1.0.0"
 
+find-open-port@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/find-open-port/-/find-open-port-2.0.2.tgz#99c058693392644b5f20235c06fe25061de37c81"
+  integrity sha512-euwFMX22qu/Ln8JXuKRbh9NU46Tj8tbeAqvdtngcYL8mXTo0eg2kCsF3LtzCMZb15FPfHSj7Dv9xqdCFxCvreQ==
+
 find-up@5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/find-up/-/find-up-5.0.0.tgz#4c92819ecb7083561e4f4a240a86be5198f536fc"

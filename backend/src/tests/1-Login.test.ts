@@ -1,10 +1,15 @@
 import fs from "fs";
 import request from "supertest";
-import { expect, filepath, url } from "./variables";
+import { app, connection } from "../app";
+import { expect, filepath } from "./variables";
 
 describe("Login", () => {
+  before(async () => {
+    await connection(false);
+  });
+
   it("Should be able to login", (done) => {
-     request(url)
+     request(app)
       .post("/graphql")
       .send({
         query: `

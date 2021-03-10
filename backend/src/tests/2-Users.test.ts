@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
-import { expect, getToken, url } from "./variables";
+import { app, connection } from "../app";
+import { expect, getToken } from "./variables";
 
 let id = null;
 let token = null;
 
 describe("Users", () => {
-  before(() => {
+  before(async () => {
+    await connection(false);
     token = getToken();
   });
 
@@ -14,7 +16,7 @@ describe("Users", () => {
     const salt = bcrypt.genSaltSync(10);
     const password = bcrypt.hashSync("123456", salt);
 
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -55,7 +57,7 @@ describe("Users", () => {
    });
 
   it("Should be able to get users", (done) => {
-     request(url)
+     request(app)
        .post("/graphql")
        .set({Authorization: `Bearer ${token}`})
        .send({
@@ -100,7 +102,7 @@ describe("Users", () => {
   });
 
   it("Should be able to get the first user from the latest test", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -133,7 +135,7 @@ describe("Users", () => {
     const salt = bcrypt.genSaltSync(10);
     const password = bcrypt.hashSync("654321", salt);
 
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -173,7 +175,7 @@ describe("Users", () => {
   });
 
   it("Should be able to update delete user", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({

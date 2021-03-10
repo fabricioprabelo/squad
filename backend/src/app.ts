@@ -29,12 +29,13 @@ dotenv.config({
   ),
 });
 
-const connection = async () => {
+const connection = async (errors: boolean = true) => {
   try {
     // initialize default database connection
     await Connection.defaultAsync();
   } catch (err) {
-    Logger.error(err.message);
+    if (errors)
+      Logger.error(err.message);
   }
 }
 

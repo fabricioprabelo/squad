@@ -1,16 +1,18 @@
 import request from "supertest";
-import { expect, getToken, url } from "./variables";
+import { app, connection } from "../app";
+import { expect, getToken } from "./variables";
 
 let id = null;
 let token = null;
 
 describe("Products", () => {
-  before(() => {
+  before(async () => {
+    await connection(false);
     token = getToken();
   });
 
   it("Should be able to create product", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -50,7 +52,7 @@ describe("Products", () => {
    });
 
   it("Should be able to get products", (done) => {
-     request(url)
+     request(app)
        .post("/graphql")
        .set({Authorization: `Bearer ${token}`})
        .send({
@@ -99,7 +101,7 @@ describe("Products", () => {
   });
 
   it("Should be able to get the first product from the latest test", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -133,7 +135,7 @@ describe("Products", () => {
   });
 
   it("Should be able to update product", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
@@ -172,7 +174,7 @@ describe("Products", () => {
   });
 
   it("Should be able to update delete product", (done) => {
-    request(url)
+    request(app)
       .post("/graphql")
       .set({Authorization: `Bearer ${token}`})
       .send({
