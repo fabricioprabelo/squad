@@ -36,8 +36,9 @@ export const SERVER_PORT =
 export const SERVER_SSL_PORT =
   Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
 export const SERVER_HOST = process.env.SERVER_HOST?.trim() || "localhost";
-  Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
-export const SUBSCRIPTIONS_PATH = process.env.SUBSCRIPTIONS_PATH?.trim() || "/subscriptions";
+Number(process.env.SERVER_SSL_PORT?.trim() || 4001) || 4001;
+export const SUBSCRIPTIONS_PATH =
+  process.env.SUBSCRIPTIONS_PATH?.trim() || "/subscriptions";
 export const SERVER_URL =
   process.env.SERVER_URL?.trim() || "http://localhost:4000";
 export const SERVER_SSL_CERT =
@@ -47,6 +48,15 @@ export const SERVER_SSL_KEY =
 export const COMPANY_NAME = process.env.COMPANY_NAME?.trim() || "";
 export const COMPANY_URL = process.env.COMPANY_URL?.trim() || "";
 export const COMPANY_ADDRESS = process.env.COMPANY_ADDRESS?.trim() || "";
+
+export const STORAGE_TYPE = process.env.STORAGE_TYPE?.trim() || "local";
+
+export const AWS_S3_BUCKET = process.env.AWS_S3_BUCKET?.trim() || "";
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID?.trim() || "";
+export const AWS_SECRET_ACCESS_KEY =
+  process.env.AWS_SECRET_ACCESS_KEY?.trim() || "";
+export const AWS_DEFAULT_REGION =
+  process.env.AWS_DEFAULT_REGION?.trim() || "us-east-1";
 
 export const SORT_DESCRIPTION =
   "Accepted values: 1 (to sort in ascending order) or -1 (to sort in descending order)";

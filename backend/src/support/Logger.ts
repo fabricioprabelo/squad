@@ -1,5 +1,5 @@
 import fs from "fs";
-import { join } from "path";
+import path from "path";
 import Bunyan, { LoggerOptions } from "bunyan";
 import { LOG_LEVEL, APP_NAME } from "../configs/constants";
 import DateTime from "./DateTime";
@@ -11,7 +11,7 @@ class Logger {
 
   constructor() {
     this.date = DateTime.now().format("YYYY-MM-DD");
-    this.path = join(__dirname, "..", "..", "logs");
+    this.path = path.resolve(__dirname, `../../storage/logs`);
 
     if (!fs.existsSync(this.path)) fs.mkdirSync(this.path);
 
@@ -22,11 +22,10 @@ class Logger {
         {
           level: LOG_LEVEL,
           type: "file",
-          path: join(__dirname, "..", "..", "logs", `${this.date}.log`),
+          path: path.resolve(__dirname, `../../storage/logs/${this.date}.log`),
         },
       ],
     };
-
     this.logger = Bunyan.createLogger(options);
   }
 

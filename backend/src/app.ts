@@ -5,14 +5,10 @@ import routes from "./routes";
 import cors from "cors";
 import path from "path";
 import dotenv from "dotenv";
-import { join } from "path";
-import {
-  IS_DEVELOPMENT,
-  SUBSCRIPTIONS_PATH,
-} from "./configs/constants";
+import { IS_DEVELOPMENT, SUBSCRIPTIONS_PATH } from "./configs/constants";
 import resolvers from "./schemas";
 import Context from "./support/Context";
-import { buildSchema, buildSchemaSync } from "type-graphql";
+import { buildSchemaSync } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import errors from "./configs/errors";
 import ApolloLoggerPlugin from "./plugins/ApolloLoggerPlugin";
@@ -34,16 +30,14 @@ const connection = async (errors: boolean = true) => {
     // initialize default database connection
     await Connection.defaultAsync();
   } catch (err) {
-    if (errors)
-      Logger.error(err.message);
+    if (errors) Logger.error(err.message);
   }
-}
+};
 
 // schema
-const schema: GraphQLSchema =  buildSchemaSync({
+const schema: GraphQLSchema = buildSchemaSync({
   resolvers,
 });
-
 
 // initialize express
 const app = express();
@@ -73,7 +67,7 @@ app.use(errors);
 app.use(routes);
 
 // serves static files
-app.use(express.static(join(__dirname, "..", "public")));
+app.use(express.static(path.resolve(__dirname, "../storage/public")));
 
 // apollo server
 const apollo: ApolloServer = new ApolloServer({
@@ -102,4 +96,4 @@ apollo.applyMiddleware({
   cors: { origin: "*" },
 });
 
-export {app, apollo, schema, connection};
+export { app, apollo, schema, connection };
